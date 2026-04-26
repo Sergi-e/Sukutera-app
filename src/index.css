@@ -47,6 +47,17 @@ body {
   display: none !important;
 }
 
+.mapboxgl-popup-content {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.mapboxgl-popup-tip {
+  display: none !important;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -82,8 +93,38 @@ body {
   to { opacity: 1; transform: scale(1); }
 }
 
+@keyframes ping {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.04); opacity: 0.6; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(32px); }
+}
+
+@keyframes toastProgress {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
 .animate-fade-up {
-  animation: fadeInUp 0.7s ease forwards;
+  animation: fadeInUp 0.7s ease both;
 }
 
 .animate-pulse-glow {
