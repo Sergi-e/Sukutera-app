@@ -27,6 +27,8 @@ export function useCollectors() {
       }
     }
 
+    if (!supabase) return
+
     fetchCollectors()
 
     const channel = supabase
