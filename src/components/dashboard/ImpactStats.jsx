@@ -1,60 +1,97 @@
-import { useMemo } from 'react'
+import { useMemo, useEffect, useRef, useState } from 'react'
 import { formatKg, percentOf } from '../../utils/formatters'
 import { DISTRICT_TARGETS } from '../../lib/constants'
 
-function StatCard({ label, value, sub, color, delay, icon }) {
+function AnimatedKg({ target }) {
+  const [displayed, setDisplayed] = useState(target)
+  const prevRef = useRef(target)
+  const frameRef = useRef(null)
+
+  useEffect(() => {
+    const from = prevRef.current
+    const to = target
+    if (from === to) return
+
+    const duration = 900
+    let start = null
+
+    const step = (ts) => {
+      if (!start) start = ts
+      const p = Math.min((ts - start) / duration, 1)
+      const eased = 1 - Math.pow(1 - p, 3)
+      setDisplayed(from + (to - from) * eased)
+      if (p < 1) {
+        frameRef.current = requestAnimationFrame(step)
+      } else {
+        prevRef.current = to
+      }
+    }
+
+    if (frameRef.current) cancelAnimationFrame(frameRef.current)
+    frameRef.current = requestAnimationFrame(step)
+    return () => { if (frameRef.current) cancelAnimationFrame(frameRef.current) }
+  }, [target])
+
+  return <span>{formatKg(displayed)}</span>
+}
+
+function StatCard({ label, value, sub, color, delay, icon, highlight }) {
   return (
     <div
-      className="glass-card shimmer-border p-6 animate-fade-up"
-      style={{ animationDelay: delay }}
+      className="glass-card shimmer-border animate-fade-up"
+      style={{
+        animationDelay: delay,
+        padding: 24,
+        transition: 'box-shadow 0.4s ease',
+        boxShadow: highlight ? `0 0 28px ${color}55` : undefined,
+      }}
     >
-      <div className="flex items-start justify-between mb-3">
-        <span className="text-3xl">{icon}</span>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+        <span style={{ fontSize: 28 }}>{icon}</span>
         <span
-          className="text-xs font-medium px-2 py-1 rounded-full"
-          style={{ background: `${color}20`, color }}
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            padding: '3px 9px',
+            borderRadius: 999,
+            background: `${color}20`,
+            color,
+          }}
         >
           Live
         </span>
       </div>
-      <div className="text-3xl font-black mt-2" style={{ color }}>
+      <div style={{ fontSize: 30, fontWeight: 900, color, lineHeight: 1, marginTop: 4 }}>
         {value}
       </div>
-      <div className="text-sm font-medium text-white mt-1">{label}</div>
+      <div style={{ fontSize: 13, fontWeight: 600, color: '#FFFFFF', marginTop: 6 }}>{label}</div>
       {sub && (
-        <div className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
-          {sub}
-        </div>
+        <div style={{ fontSize: 11, marginTop: 4, color: 'rgba(255,255,255,0.45)' }}>{sub}</div>
       )}
     </div>
   )
 }
 
-export default function ImpactStats({ collections, collectors }) {
+export default function ImpactStats({ collections, collectors, highlightKg }) {
   const stats = useMemo(() => {
     const totalKg = collections.reduce((s, c) => s + (c.weight_kg || 0), 0)
     const totalCollectors = collectors.length
     const totalPoints = collectors.reduce((s, c) => s + (c.total_points || 0), 0)
-
-    const districtTotals = {}
-    collections.forEach((c) => {
-      if (c.district) districtTotals[c.district] = (districtTotals[c.district] || 0) + c.weight_kg
-    })
     const totalTarget = Object.values(DISTRICT_TARGETS).reduce((s, d) => s + d.target_kg, 0)
     const progress = percentOf(totalKg, totalTarget)
-
     return { totalKg, totalCollectors, totalPoints, progress, totalTarget }
   }, [collections, collectors])
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
       <StatCard
         icon="🏔️"
         label="Plastic Collected"
-        value={formatKg(stats.totalKg)}
+        value={<AnimatedKg target={stats.totalKg} />}
         sub="from Lake Kivu shores"
         color="#0A7C6E"
         delay="0s"
+        highlight={highlightKg}
       />
       <StatCard
         icon="👥"
