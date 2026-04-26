@@ -6,7 +6,7 @@ export default function LogCollection() {
   const [submitted, setSubmitted] = useState(false)
 
   return (
-    <div className="min-h-screen pt-24 pb-16 px-6">
+    <div style={{ minHeight: '100vh', paddingTop: 88, paddingBottom: 64, paddingLeft: 24, paddingRight: 24, boxSizing: 'border-box' }}>
       <div className="max-w-xl mx-auto">
         {/* Header */}
         <div className="mb-8">

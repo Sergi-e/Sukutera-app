@@ -9,7 +9,7 @@ export default function LeaderboardPage() {
   const totalKg = collectors.reduce((s, c) => s + (c.total_kg || 0), 0)
 
   return (
-    <div className="min-h-screen pt-24 pb-16 px-6">
+    <div style={{ minHeight: '100vh', paddingTop: 88, paddingBottom: 64, paddingLeft: 24, paddingRight: 24, boxSizing: 'border-box' }}>
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
