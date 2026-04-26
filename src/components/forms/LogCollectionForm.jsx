@@ -66,6 +66,15 @@ export default function LogCollectionForm({ onSuccess }) {
       district: form.district,
     }
 
+    if (!supabase) {
+      // Demo mode — no Supabase connected
+      await new Promise((r) => setTimeout(r, 700))
+      setStatus('success')
+      setForm(INITIAL)
+      onSuccess?.()
+      return
+    }
+
     try {
       const { error: colErr } = await supabase.from(TABLES.COLLECTIONS).insert([payload])
       if (colErr) throw colErr
@@ -84,7 +93,7 @@ export default function LogCollectionForm({ onSuccess }) {
       onSuccess?.()
     } catch (err) {
       setStatus('error')
-      setErrorMsg(err.message || 'Failed to submit. Using demo mode — connect Supabase to save data.')
+      setErrorMsg(err.message || 'Submission failed.')
     }
   }
 

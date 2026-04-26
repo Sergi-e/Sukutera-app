@@ -1,6 +1,7 @@
 export function formatKg(kg) {
-  if (kg >= 1000) return `${(kg / 1000).toFixed(1)}t`
-  return `${kg.toFixed(1)} kg`
+  const n = typeof kg === 'number' && !isNaN(kg) ? kg : 0
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}t`
+  return `${n.toFixed(1)} kg`
 }
 
 export function formatDate(dateStr) {
