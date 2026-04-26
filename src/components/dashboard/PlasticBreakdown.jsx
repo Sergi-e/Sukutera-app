@@ -54,19 +54,19 @@ export default function PlasticBreakdown({ collections }) {
       </ResponsiveContainer>
 
       {/* Legend */}
-      <div className="flex flex-col gap-2 mt-2">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
         {data.map((d) => (
-          <div key={d.type} className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full" style={{ background: d.color }} />
+          <div key={d.type} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 13 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: d.color, flexShrink: 0 }} />
               <span style={{ color: 'rgba(255,255,255,0.75)' }}>{d.name}</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="font-medium text-white">{formatKg(d.value)}</span>
-              <span
-                className="text-xs px-1.5 py-0.5 rounded"
-                style={{ background: `${d.color}20`, color: d.color }}
-              >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontWeight: 600, color: '#FFFFFF' }}>{formatKg(d.value)}</span>
+              <span style={{
+                fontSize: 11, padding: '2px 7px', borderRadius: 6,
+                background: `${d.color}20`, color: d.color, fontWeight: 600,
+              }}>
                 {d.percent}%
               </span>
             </div>
