@@ -15,8 +15,6 @@ export const DISTRICT_TARGETS = {
   Rusizi: { shoreline_km: 35.7, target_kg: 620 },
 }
 
-export const MAPBOX_STYLE = 'mapbox://styles/mapbox/navigation-night-v1'
-
 export const SEED_COLLECTIONS = [
   // Rubavu district
   { collector_id: 'seed-1', latitude: -1.6784, longitude: 29.2544, weight_kg: 4.2, plastic_type: 'PET', district: 'Rubavu', notes: 'Near Gisenyi beach' },
