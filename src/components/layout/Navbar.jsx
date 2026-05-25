@@ -5,6 +5,7 @@ const NAV_LINKS = [
   { path: '/', label: 'Home' },
   { path: '/map', label: 'Live Map' },
   { path: '/leaderboard', label: 'Leaderboard' },
+  { path: '/ecosystem', label: 'Ecosystem' },
   { path: '/impact', label: 'Impact' },
 ]
 

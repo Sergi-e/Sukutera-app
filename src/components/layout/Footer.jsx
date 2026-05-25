@@ -43,6 +43,7 @@ export default function Footer() {
                 { to: '/map', label: 'Live Map' },
                 { to: '/log', label: 'Log Collection' },
                 { to: '/leaderboard', label: 'Leaderboard' },
+                { to: '/ecosystem', label: 'Ecosystem' },
                 { to: '/impact', label: 'Impact Dashboard' },
               ].map(({ to, label }) => (
                 <Link
