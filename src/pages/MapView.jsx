@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import LiveMap from '../components/map/LiveMap'
 import { useCollections } from '../hooks/useCollections'
 import { useCollectors } from '../hooks/useCollectors'
 import { PLASTIC_TYPES } from '../lib/constants'
+import { getOffTakersForPlastic } from '../lib/stakeholders'
 import { formatKg } from '../utils/formatters'
 
 const hasToken = () => {
@@ -20,6 +22,7 @@ export default function MapView() {
     : collections.filter((c) => c.plastic_type === filterType)
 
   const totalKg = collections.reduce((s, c) => s + (c.weight_kg || 0), 0)
+  const offTakers = filterType !== 'All' ? getOffTakersForPlastic(filterType) : []
 
   const btnBase = {
     padding: '5px 12px',
@@ -71,8 +74,24 @@ export default function MapView() {
           </div>
         </div>
 
-        {/* Plastic type filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+        {/* Plastic type filter + ecosystem link */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <Link
+            to="/ecosystem"
+            style={{
+              padding: '5px 12px',
+              borderRadius: 8,
+              fontSize: 12,
+              fontWeight: 600,
+              textDecoration: 'none',
+              background: 'rgba(59,130,246,0.12)',
+              color: '#60A5FA',
+              border: '1px solid rgba(59,130,246,0.25)',
+            }}
+          >
+            🔗 Ecosystem
+          </Link>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
           <button
             onClick={() => setFilterType('All')}
             style={{
@@ -99,8 +118,36 @@ export default function MapView() {
               {type}
             </button>
           ))}
+          </div>
         </div>
       </div>
+
+      {filterType !== 'All' && offTakers.length > 0 && (
+        <div
+          style={{
+            padding: '8px 24px',
+            background: 'rgba(59,130,246,0.08)',
+            borderBottom: '1px solid rgba(59,130,246,0.18)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 10,
+            flexShrink: 0,
+          }}
+        >
+          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>
+            <span style={{ color: PLASTIC_TYPES[filterType]?.color, fontWeight: 700 }}>{filterType}</span>
+            {' '}collections route to:{' '}
+            <span style={{ color: '#60A5FA', fontWeight: 600 }}>
+              {offTakers.map((o) => o.name).join(' · ')}
+            </span>
+          </span>
+          <Link to="/ecosystem" style={{ fontSize: 11, fontWeight: 600, color: '#0A7C6E', textDecoration: 'none' }}>
+            Full directory →
+          </Link>
+        </div>
+      )}
 
       {/* ─── Map / placeholder ───────────────────────────────────────────── */}
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>

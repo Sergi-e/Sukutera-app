@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { LAKE_KIVU_CENTER, PLASTIC_TYPES } from '../../lib/constants'
+import { getOffTakersForPlastic } from '../../lib/stakeholders'
 import { createPinElement } from './CollectionPin'
 import { formatKg } from '../../utils/formatters'
 
@@ -78,6 +79,8 @@ export default function LiveMap({ collections = [], collectors = [], className =
         const collectorName = collectorMap[c.collector_id] || 'Unknown Collector'
         const date          = formatDate(c.created_at)
         const pts           = typeInfo.points * Math.round(c.weight_kg || 0)
+        const offTakers     = getOffTakersForPlastic(c.plastic_type)
+        const offTakerNames = offTakers.map((o) => o.name).join(', ') || '—'
 
         const el = createPinElement(c.plastic_type, c.weight_kg)
 
@@ -132,9 +135,14 @@ export default function LiveMap({ collections = [], collectors = [], className =
             <div style="
               display:flex;align-items:center;justify-content:space-between;
               padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);
+              margin-bottom:8px;
             ">
               <span style="font-size:11px;color:rgba(255,255,255,0.35);">Points earned</span>
               <span style="font-size:13px;font-weight:800;color:#10B981;">+${pts} pts</span>
+            </div>
+
+            <div style="font-size:10px;color:rgba(255,255,255,0.35);line-height:1.5;">
+              ♻️ Off-taker: <span style="color:rgba(96,165,250,0.9);">${offTakerNames}</span>
             </div>
           </div>
         `)
