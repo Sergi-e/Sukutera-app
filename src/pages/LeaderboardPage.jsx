@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useCollectors } from '../hooks/useCollectors'
 import Leaderboard from '../components/collectors/Leaderboard'
 import { formatKg } from '../utils/formatters'
@@ -69,6 +70,61 @@ export default function LeaderboardPage() {
         )}
 
         <Leaderboard collectors={collectors} />
+
+        <div
+          style={{
+            marginTop: 32,
+            padding: '20px 24px',
+            borderRadius: 16,
+            background: 'rgba(15,42,61,0.7)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 16,
+          }}
+        >
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 4 }}>
+              Keep the momentum going
+            </div>
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)' }}>
+              Log more collections or explore where recovered waste goes next.
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+            <Link
+              to="/log"
+              style={{
+                padding: '9px 18px',
+                borderRadius: 10,
+                background: 'linear-gradient(135deg, #0A7C6E, #0d9e8e)',
+                color: '#fff',
+                fontSize: 13,
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              + Log Collection
+            </Link>
+            <Link
+              to="/ecosystem"
+              style={{
+                padding: '9px 18px',
+                borderRadius: 10,
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                color: 'rgba(255,255,255,0.75)',
+                fontSize: 13,
+                fontWeight: 600,
+                textDecoration: 'none',
+              }}
+            >
+              View Ecosystem →
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   )

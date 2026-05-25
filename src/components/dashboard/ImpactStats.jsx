@@ -1,6 +1,8 @@
 import { useMemo, useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { formatKg, percentOf } from '../../utils/formatters'
 import { DISTRICT_TARGETS } from '../../lib/constants'
+import { STAKEHOLDERS } from '../../lib/stakeholders'
 
 function AnimatedKg({ target }) {
   const [displayed, setDisplayed] = useState(target)
@@ -35,15 +37,16 @@ function AnimatedKg({ target }) {
   return <span>{formatKg(displayed)}</span>
 }
 
-function StatCard({ label, value, sub, color, delay, icon, highlight }) {
-  return (
+function StatCard({ label, value, sub, color, delay, icon, highlight, href }) {
+  const inner = (
     <div
       className="glass-card shimmer-border animate-fade-up"
       style={{
         animationDelay: delay,
         padding: 24,
-        transition: 'box-shadow 0.4s ease',
+        transition: 'box-shadow 0.4s ease, transform 0.2s ease',
         boxShadow: highlight ? `0 0 28px ${color}55` : undefined,
+        height: '100%',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -70,6 +73,16 @@ function StatCard({ label, value, sub, color, delay, icon, highlight }) {
       )}
     </div>
   )
+
+  if (href) {
+    return (
+      <Link to={href} style={{ textDecoration: 'none', display: 'block' }}>
+        {inner}
+      </Link>
+    )
+  }
+
+  return inner
 }
 
 export default function ImpactStats({ collections, collectors, highlightKg }) {
@@ -116,6 +129,15 @@ export default function ImpactStats({ collections, collectors, highlightKg }) {
         sub={`of ${formatKg(stats.totalTarget)} goal`}
         color="#10B981"
         delay="0.3s"
+      />
+      <StatCard
+        icon="🔗"
+        label="Ecosystem Partners"
+        value={STAKEHOLDERS.length}
+        sub="collectors · recyclers · compost"
+        color="#48CAE4"
+        delay="0.4s"
+        href="/ecosystem"
       />
     </div>
   )

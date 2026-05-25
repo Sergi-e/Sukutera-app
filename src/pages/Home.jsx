@@ -4,6 +4,8 @@ import { useCollections } from '../hooks/useCollections'
 import { useCollectors } from '../hooks/useCollectors'
 import { formatKg } from '../utils/formatters'
 import { DISTRICT_TARGETS } from '../lib/constants'
+import { STAKEHOLDERS } from '../lib/stakeholders'
+import { STAKEHOLDER_CATEGORIES, STAKEHOLDERS } from '../lib/stakeholders'
 
 function AnimatedNumber({ target, suffix = '' }) {
   const [value, setValue] = useState(0)
@@ -262,15 +264,32 @@ export default function Home() {
             >
               🗺 View Live Map
             </Link>
+            <Link
+              to="/ecosystem"
+              style={{
+                display: 'inline-block',
+                padding: '14px 32px',
+                borderRadius: 14,
+                background: 'rgba(59,130,246,0.1)',
+                border: '1px solid rgba(59,130,246,0.25)',
+                color: '#60A5FA',
+                fontWeight: 700,
+                fontSize: 15,
+                textDecoration: 'none',
+                minWidth: 180,
+              }}
+            >
+              🔗 Partner Ecosystem
+            </Link>
           </div>
 
           {/* ─── 3 Stat cards ─── */}
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
               gap: 16,
-              maxWidth: 660,
+              maxWidth: 860,
               margin: '0 auto',
             }}
           >
@@ -294,6 +313,13 @@ export default function Home() {
               label="Shoreline Coverage"
               color="#F5E6C8"
               delay="0.7s"
+            />
+            <StatCard
+              icon="🔗"
+              value={<AnimatedNumber target={STAKEHOLDERS.length} />}
+              label="Ecosystem Partners"
+              color="#10B981"
+              delay="0.8s"
             />
           </div>
         </div>
@@ -389,7 +415,8 @@ export default function Home() {
               { step: '01', icon: '🤿', title: 'Collect', desc: 'Gather plastic from Lake Kivu shorelines and sort by type.' },
               { step: '02', icon: '📱', title: 'Log', desc: 'GPS-tagged submissions with weight, plastic type and optional photo.' },
               { step: '03', icon: '⭐', title: 'Earn', desc: 'Points awarded instantly — PET earns most, Mixed earns least.' },
-              { step: '04', icon: '📊', title: 'Impact', desc: 'Real-time dashboard tracks progress toward district conservation targets.' },
+              { step: '04', icon: '🔗', title: 'Connect', desc: 'Verified recyclers and compost processors receive sorted waste through the ecosystem.' },
+              { step: '05', icon: '📊', title: 'Impact', desc: 'Real-time dashboard tracks progress toward district conservation targets.' },
             ].map((item) => (
               <div
                 key={item.step}
@@ -409,6 +436,95 @@ export default function Home() {
                 <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>{item.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── ECOSYSTEM PREVIEW ──────────────────────────────────────────── */}
+      <section style={{ padding: '80px 24px', background: 'rgba(15,42,61,0.45)' }}>
+        <div style={{ maxWidth: 1120, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <h2 style={{ fontSize: 30, fontWeight: 900, color: '#FFFFFF', marginBottom: 10 }}>
+              Partner Ecosystem
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15, maxWidth: 520, margin: '0 auto' }}>
+              Collectors, recyclers, and compost processors working together across Rwanda&apos;s circular economy
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 32 }}>
+            {Object.values(STAKEHOLDER_CATEGORIES).map((category) => {
+              const partners = STAKEHOLDERS.filter((s) => s.category === category.id)
+              return (
+                <div
+                  key={category.id}
+                  style={{
+                    background: 'rgba(15,42,61,0.7)',
+                    border: `1px solid ${category.color}25`,
+                    borderLeft: `4px solid ${category.color}`,
+                    borderRadius: 16,
+                    padding: 24,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                    <span style={{ fontSize: 24 }}>{category.icon}</span>
+                    <div>
+                      <div style={{ fontWeight: 700, color: '#FFFFFF', fontSize: 16 }}>{category.label}</div>
+                      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{partners.length} partners</div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {partners.slice(0, 3).map((p) => (
+                      <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div
+                          style={{
+                            width: 32,
+                            height: 32,
+                            borderRadius: 8,
+                            flexShrink: 0,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: 11,
+                            fontWeight: 800,
+                            color: '#fff',
+                            background: `${category.color}30`,
+                            border: `1px solid ${category.color}45`,
+                          }}
+                        >
+                          {p.initials}
+                        </div>
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {p.name}
+                          </div>
+                          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{p.district}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <Link
+              to="/ecosystem"
+              style={{
+                display: 'inline-block',
+                padding: '14px 32px',
+                borderRadius: 14,
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(10,124,110,0.4)',
+                color: '#0A7C6E',
+                fontWeight: 700,
+                fontSize: 15,
+                textDecoration: 'none',
+              }}
+            >
+              View Full Partner Directory →
+            </Link>
           </div>
         </div>
       </section>

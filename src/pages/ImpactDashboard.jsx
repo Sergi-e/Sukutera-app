@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import { useCollections } from '../hooks/useCollections'
 import { useCollectors } from '../hooks/useCollectors'
 import ImpactStats from '../components/dashboard/ImpactStats'
@@ -6,6 +7,7 @@ import PlasticBreakdown from '../components/dashboard/PlasticBreakdown'
 import TimelineChart from '../components/dashboard/TimelineChart'
 import Leaderboard from '../components/collectors/Leaderboard'
 import { DISTRICT_TARGETS, PLASTIC_TYPES, DISTRICTS } from '../lib/constants'
+import { STAKEHOLDER_CATEGORIES, STAKEHOLDERS } from '../lib/stakeholders'
 import { formatKg, percentOf } from '../utils/formatters'
 
 const DEMO_MAX = 5
@@ -283,7 +285,7 @@ export default function ImpactDashboard() {
         </div>
 
         {/* ─── Charts ─── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: 20, marginBottom: 24 }}>
+        <div className="impact-charts-grid">
           <div style={{ minWidth: 0 }}>
             <TimelineChart collections={allCollections} />
           </div>
@@ -347,14 +349,74 @@ export default function ImpactDashboard() {
           </div>
         </div>
 
+        {/* ─── Partner ecosystem strip ─── */}
+        <div
+          style={{
+            background: 'rgba(15,42,61,0.7)',
+            backdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: 16,
+            padding: '20px 24px',
+            marginBottom: 24,
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 16,
+          }}
+        >
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#FFFFFF', marginBottom: 6 }}>
+              Partner Ecosystem
+            </h3>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', margin: 0, maxWidth: 480 }}>
+              {STAKEHOLDERS.length} verified partners across collection, recycling, and compost — closing the circular economy loop.
+            </p>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
+            {Object.values(STAKEHOLDER_CATEGORIES).map((cat) => (
+              <div
+                key={cat.id}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 999,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  background: `${cat.color}12`,
+                  color: cat.color,
+                  border: `1px solid ${cat.color}28`,
+                }}
+              >
+                {STAKEHOLDERS.filter((s) => s.category === cat.id).length} {cat.label.split(' ')[0].toLowerCase()}
+              </div>
+            ))}
+            <Link
+              to="/ecosystem"
+              style={{
+                padding: '8px 16px',
+                borderRadius: 10,
+                background: 'rgba(10,124,110,0.15)',
+                border: '1px solid rgba(10,124,110,0.35)',
+                color: '#0A7C6E',
+                fontSize: 13,
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              View Directory →
+            </Link>
+          </div>
+        </div>
+
         {/* ─── Bottom grid ─── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+        <div className="impact-bottom-grid">
           <Leaderboard collectors={collectors} compact limit={5} />
           <div
+            className="impact-recent-panel"
             style={{
               background: 'rgba(15,42,61,0.7)', backdropFilter: 'blur(16px)',
               border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, padding: 24,
-              gridColumn: 'span 2', minWidth: 0,
+              minWidth: 0,
             }}
           >
             <h3 style={{ fontSize: 16, fontWeight: 700, color: '#FFFFFF', marginBottom: 16 }}>
