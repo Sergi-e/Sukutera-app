@@ -4,7 +4,6 @@ import { useCollections } from '../hooks/useCollections'
 import { useCollectors } from '../hooks/useCollectors'
 import { formatKg } from '../utils/formatters'
 import { DISTRICT_TARGETS } from '../lib/constants'
-import { STAKEHOLDERS } from '../lib/stakeholders'
 import { STAKEHOLDER_CATEGORIES, STAKEHOLDERS } from '../lib/stakeholders'
 
 function AnimatedNumber({ target, suffix = '' }) {
