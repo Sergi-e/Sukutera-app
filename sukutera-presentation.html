@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sukutera — Field Presentation</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0A1408; color: #F5F0E8; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+  #prog { height: 3px; background: #1a2e18; flex-shrink: 0; }
+  #prog-fill { height: 100%; background: linear-gradient(90deg,#52B788,#2196A6); transition: width 0.4s ease; }
+
+  #topbar { padding: 6px 26px; border-bottom: 1px solid rgba(255,255,255,0.07); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .brand { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: rgba(255,255,255,0.3); text-transform: uppercase; }
+  .ctr-lbl { font-size: 10px; color: rgba(255,255,255,0.28); }
+
+  #stage { flex: 1; overflow: hidden; position: relative; }
+  .slide { position: absolute; inset: 0; display: none; overflow-y: auto; flex-direction: column; }
+  .slide.active { display: flex; animation: fu 0.3s ease; }
+  @keyframes fu { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  #nav { padding: 9px 26px; border-top: 1px solid rgba(255,255,255,0.07); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: #0A1408; }
+  .dots { display: flex; gap: 6px; align-items: center; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.14); cursor: pointer; border: none; transition: all 0.2s; }
+  .dot.active { background: #52B788; transform: scale(1.35); }
+  .btn { padding: 7px 18px; border-radius: 7px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: opacity 0.15s, transform 0.1s; }
+  .btn:disabled { opacity: 0.22; cursor: default; }
+  .btn:not(:disabled):hover { opacity: 0.82; transform: translateY(-1px); }
+  .btn-p { background: #52B788; color: #0A1408; }
+  .btn-s { background: rgba(255,255,255,0.08); color: #F5F0E8; }
+
+  /* Typography */
+  .eye { font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: #52B788; font-weight: 700; margin-bottom: 5px; }
+  .eye.bl { color: #48CAE4; }
+  .eye.am { color: #D4A373; }
+  h1 { font-size: 56px; line-height: 1.0; font-weight: 900; color: #fff; letter-spacing: -0.02em; }
+  h2 { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 11px; line-height: 1.2; }
+  h3 { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.78); margin-bottom: 6px; }
+  .body { color: rgba(255,255,255,0.58); line-height: 1.65; font-size: 13px; }
+  .muted { color: rgba(255,255,255,0.32); font-size: 11px; }
+  .big-num { font-size: 42px; font-weight: 900; color: #52B788; line-height: 1; }
+
+  /* Layout */
+  .pad { padding: 26px 38px; }
+  .split { display: flex; flex: 1; overflow: hidden; }
+  .split-imgs { flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+  .fade-r { position: absolute; inset: 0; background: linear-gradient(to right,transparent 62%,#0A1408 100%); pointer-events: none; z-index: 1; }
+
+  /* Cards */
+  .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 9px; padding: 11px 13px; }
+  .card h3 { font-size: 11px; color: #52B788; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px; margin-bottom: 6px; }
+  .card p { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.58; }
+  .card.hl { border-color: rgba(82,183,136,0.22); background: rgba(82,183,136,0.06); }
+
+  /* Callout */
+  .callout { border-left: 3px solid #52B788; background: rgba(82,183,136,0.08); padding: 10px 13px; border-radius: 0 8px 8px 0; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.65; }
+  .callout.bl { border-color: #48CAE4; background: rgba(72,202,228,0.07); }
+  .callout.am { border-color: #D4A373; background: rgba(212,163,115,0.07); }
+
+  /* Stat bar */
+  .stat-bar { display: flex; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; background: rgba(255,255,255,0.04); }
+  .stat { text-align: center; padding: 10px 14px; border-right: 1px solid rgba(255,255,255,0.07); flex: 1; }
+  .stat:last-child { border-right: none; }
+  .stat .v { font-size: 22px; font-weight: 900; color: #52B788; line-height: 1; }
+  .stat .l { font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.36); margin-top: 3px; }
+
+  /* Grid */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9px; }
+
+  hr { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 12px 0; }
+
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: rgba(82,183,136,0.11); color: #52B788; border: 1px solid rgba(82,183,136,0.23); margin: 2px; }
+  .pill.bl { background: rgba(72,202,228,0.09); color: #48CAE4; border-color: rgba(72,202,228,0.2); }
+  .pill.dim { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.48); border-color: rgba(255,255,255,0.1); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; padding: 6px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: rgba(255,255,255,0.3); border-bottom: 1px solid rgba(255,255,255,0.07); }
+  td { padding: 6px 8px; color: rgba(255,255,255,0.62); border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr.hl td { color: #52B788; font-weight: 700; }
+  td.ok { color: #52B788 !important; }
+  td.am { color: #D4A373 !important; }
+
+  .row-i { display: flex; gap: 9px; align-items: flex-start; margin-bottom: 8px; }
+  .adot { width: 6px; height: 6px; border-radius: 50%; background: #52B788; flex-shrink: 0; margin-top: 5px; }
+  .adot.bl { background: #48CAE4; }
+  .adot.am { background: #D4A373; }
+  .rit .name { font-size: 13px; font-weight: 600; color: #fff; }
+  .rit .sub { font-size: 11px; color: rgba(255,255,255,0.37); margin-top: 2px; }
+
+  .step { display: flex; gap: 9px; align-items: flex-start; margin-bottom: 8px; }
+  .stag { padding: 2px 9px; border-radius: 999px; font-size: 10px; font-weight: 700; background: rgba(82,183,136,0.12); color: #52B788; border: 1px solid rgba(82,183,136,0.23); white-space: nowrap; }
+  .stxt { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.5; padding-top: 2px; }
+
+  .mc { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 9px 11px; display: flex; gap: 8px; align-items: flex-start; }
+  .mc-icon { font-size: 16px; flex-shrink: 0; }
+  .mc-t { font-size: 12px; font-weight: 700; color: #52B788; margin-bottom: 2px; }
+  .mc-b { font-size: 11px; color: rgba(255,255,255,0.47); line-height: 1.5; }
+
+  /* Budget bar */
+  .bbar-row { margin-bottom: 10px; }
+  .bbar-label { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .bbar-label span:first-child { font-size: 12px; color: rgba(255,255,255,0.7); }
+  .bbar-label span:last-child { font-size: 12px; font-weight: 700; color: #52B788; }
+  .bbar-track { height: 7px; background: rgba(255,255,255,0.07); border-radius: 4px; overflow: hidden; }
+  .bbar-fill { height: 100%; border-radius: 4px; }
+
+  /* Clickable images */
+  .ci { cursor: pointer; position: relative; overflow: hidden; display: block; }
+  .ci img, .ci video { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s, filter 0.3s; }
+  .ci:hover img, .ci:hover video { transform: scale(1.04); filter: brightness(1.1); }
+  .ci-hint { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: rgba(255,255,255,0.85); font-size: 10px; padding: 2px 7px; border-radius: 4px; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 3; }
+  .ci:hover .ci-hint { opacity: 1; }
+  .ci-cap { position: absolute; bottom: 0; left: 0; right: 0; padding: 5px 9px; background: linear-gradient(transparent,rgba(0,0,0,0.8)); font-size: 10px; color: rgba(255,255,255,0.72); font-style: italic; z-index: 2; pointer-events: none; }
+  .ci-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 42px; height: 42px; border-radius: 50%; background: rgba(82,183,136,0.85); display: flex; align-items: center; justify-content: center; font-size: 16px; z-index: 2; pointer-events: none; box-shadow: 0 2px 14px rgba(0,0,0,0.5); }
+
+  /* Community quote */
+  .quote { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; padding: 12px 16px; position: relative; }
+  .quote::before { content: '"'; font-size: 52px; line-height: 1; color: #52B788; opacity: 0.25; position: absolute; top: 2px; left: 10px; }
+  .quote p { font-size: 13px; color: rgba(255,255,255,0.72); font-style: italic; line-height: 1.65; padding-left: 22px; }
+  .quote .attr { font-size: 11px; color: rgba(255,255,255,0.38); margin-top: 6px; padding-left: 22px; }
+
+  /* SLIDE 1 hero */
+  #s0 { position: relative; }
+  #s0 .hbg { position: absolute; inset: 0; background-size: cover; background-position: center 40%; }
+  #s0 .hov { position: absolute; inset: 0; background: linear-gradient(135deg,rgba(10,20,8,0.88) 30%,rgba(10,20,8,0.45) 100%); }
+  #s0 .hc { position: relative; z-index: 2; padding: 30px 46px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+
+  /* LIGHTBOX */
+  #lb { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 999; flex-direction: column; align-items: center; justify-content: space-between; padding: 12px 14px 8px; }
+  #lb.show { display: flex; animation: lbi 0.2s ease; }
+  @keyframes lbi { from{opacity:0} to{opacity:1} }
+  #lb-x { position: absolute; top: 12px; right: 16px; background: rgba(255,255,255,0.1); border: none; color: #fff; font-size: 17px; cursor: pointer; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; z-index: 10; }
+  #lb-x:hover { background: rgba(255,255,255,0.22); }
+  #lb-main { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; gap: 0; }
+  #lb-mw { display: flex; align-items: center; justify-content: center; flex: 1; }
+  #lb-mw img { max-height: 66vh; max-width: 82vw; object-fit: contain; border-radius: 8px; }
+  #lb-mw video { max-height: 66vh; max-width: 82vw; border-radius: 8px; }
+  .lba { background: rgba(255,255,255,0.1); border: none; color: #fff; font-size: 22px; cursor: pointer; border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; flex-shrink: 0; }
+  .lba:hover { background: rgba(255,255,255,0.22); }
+  #lb-info { text-align: center; padding: 5px 0 3px; }
+  #lb-cap { font-size: 13px; color: rgba(255,255,255,0.68); font-style: italic; }
+  #lb-ctr { font-size: 11px; color: rgba(255,255,255,0.28); margin-top: 2px; }
+  #lb-thumbs { display: flex; gap: 5px; overflow-x: auto; padding: 6px 0; max-width: 92vw; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; }
+  #lb-thumbs::-webkit-scrollbar { height: 3px; }
+  #lb-thumbs::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 2px; }
+  .lbt { width: 48px; height: 34px; border-radius: 4px; cursor: pointer; opacity: 0.42; transition: opacity 0.15s; flex-shrink: 0; border: 2px solid transparent; object-fit: cover; background: #1a2e18; }
+  .lbt:hover { opacity: 0.72; }
+  .lbt.active { opacity: 1 !important; border-color: #52B788; }
+  .lbvt { width: 48px; height: 34px; border-radius: 4px; cursor: pointer; opacity: 0.42; flex-shrink: 0; border: 2px solid transparent; background: #1a2e18; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: opacity 0.15s; color: rgba(255,255,255,0.7); }
+  .lbvt:hover { opacity: 0.72; }
+  .lbvt.active { opacity: 1 !important; border-color: #52B788; }
+</style>
+</head>
+<body>
+
+<div id="prog"><div id="prog-fill" style="width:12.5%"></div></div>
+<div id="topbar">
+  <span class="ctr-lbl" id="ctr">1 / 8</span>
+  <span class="brand">Sukutera · Lake Kivu Plastic Intelligence Platform · Rubavu, Rwanda</span>
+</div>
+
+<div id="stage">
+
+<!-- ═══════════════════════════════════════
+     SLIDE 1 — TITLE
+     Hero: dramatic shoreline with collector visible in bg
+════════════════════════════════════════ -->
+<div class="slide active" id="s0">
+  <div class="hbg" style="background-image:url('file:///C:/Users/serge/Downloads/Sukutera%20Other%20images/WhatsApp%20Image%202026-05-07%20at%2015.35.20.jpeg')"></div>
+  <div class="hov"></div>
+  <div class="hc">
+    <div>
+      <div class="eye" style="font-size:11px">National Geographic Society · The Nature Conservancy · Extern</div>
+      <h1 style="margin-top:6px">SUKUTERA</h1>
+      <div style="font-size:19px;font-weight:600;color:#52B788;margin:8px 0">Track. Sort. Sustain.</div>
+      <p class="body" style="max-width:480px;margin-top:8px">A plastic waste tracking and community incentive platform for Lake Kivu, Rwanda — turning invisible collection data into a fundable circular economy.</p>
+      <div style="margin-top:12px">
+        <span class="pill">Rubavu</span>
+        <span class="pill">Karongi</span>
+        <span class="pill">Rusizi</span>
+        <span class="pill bl">Web MVP Live</span>
+        <span class="pill dim">Field Validated</span>
+      </div>
+    </div>
+    <div>
+      <div class="stat-bar" style="margin-bottom:10px">
+        <div class="stat"><div class="v">3</div><div class="l">Districts</div></div>
+        <div class="stat"><div class="v">106 km</div><div class="l">Shoreline</div></div>
+        <div class="stat"><div class="v">$2,000</div><div class="l">Seed Fund</div></div>
+        <div class="stat"><div class="v">30</div><div class="l">Signed Releases</div></div>
+        <div class="stat"><div class="v">7</div><div class="l">Field Visits</div></div>
+      </div>
+      <p class="muted" style="font-style:italic">📍 Photo: Lake Kivu shoreline, Saga Bay — collector working in the background, Rubavu</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 2 — THE PROBLEM
+════════════════════════════════════════ -->
+<div class="slide" id="s1">
+  <div class="split" style="flex:1">
+    <div class="split-imgs" style="flex:0 0 41%">
+      <div class="ci" onclick="openLB(6)" style="flex:1;min-height:0">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.49.jpeg" style="height:100%" />
+        <div class="ci-hint">🔍 Full view</div>
+        <div class="ci-cap">Foam & contamination on Lake Kivu surface</div>
+      </div>
+      <div class="ci" onclick="openLB(0)" style="flex:1;min-height:0">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.47%20(1).jpeg" style="height:100%;object-position:center 60%" />
+        <div class="ci-hint">🔍 Full view</div>
+        <div class="ci-cap">Plastic bottle drifting in Lake Kivu</div>
+      </div>
+      <div class="fade-r"></div>
+    </div>
+    <div style="flex:1;padding:24px 28px;overflow-y:auto;display:flex;flex-direction:column;justify-content:center">
+      <div class="eye">The Problem</div>
+      <h2>Lake Kivu — a transboundary lake under invisible threat</h2>
+      <div class="callout am" style="margin-bottom:12px">Lake Kivu sits between Rwanda and DRC. Waste from Goma and Bukavu drifts continuously toward Rwandan shores — and nobody is counting it.</div>
+      <div class="g2" style="margin-bottom:12px">
+        <div class="card"><h3>🐟 Sambaza Fishing</h3><p>Plastic destroys sardine breeding grounds — threatening livelihoods across all 3 districts.</p></div>
+        <div class="card"><h3>⚡ Ruzizi Hydro</h3><p>Plastic debris clogs turbines causing measurable energy loss across the region.</p></div>
+        <div class="card"><h3>📊 Zero Data</h3><p>Nobody tracks what's collected, by whom, or where it goes. The system is invisible and unfundable.</p></div>
+        <div class="card"><h3>🌊 Cross-Border Inflow</h3><p>No permanent buffer — Rwandan shores keep receiving DRC waste indefinitely.</p></div>
+      </div>
+      <div class="callout">Both photos taken during our field visits to Saga Bay. The pollution is real, recent, and entirely untracked. Click any image to view full size.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 3 — COMMUNITY INTERACTION
+     This is the heart of the human story
+════════════════════════════════════════ -->
+<div class="slide" id="s2">
+  <div style="display:flex;flex:1;overflow:hidden">
+    <!-- Left: 3-photo mosaic of community moments -->
+    <div style="flex:0 0 44%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;overflow:hidden;position:relative">
+      <div class="ci" onclick="openLB(8)" style="grid-column:1;grid-row:1;min-height:0">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.50%20(2).jpeg" style="height:100%;object-position:center top" />
+        <div class="ci-hint">🔍</div>
+        <div class="ci-cap">Field interview — Rubavu</div>
+      </div>
+      <div class="ci" onclick="openLB(11)" style="grid-column:2;grid-row:1;min-height:0">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.51%20(2).jpeg" style="height:100%;object-position:center top" />
+        <div class="ci-hint">🔍</div>
+        <div class="ci-cap">NatGeo releases signed</div>
+      </div>
+      <div class="ci" onclick="openLB(12)" style="grid-column:1;grid-row:2;min-height:0">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.51%20(3).jpeg" style="height:100%;object-position:center" />
+        <div class="ci-hint">🔍</div>
+        <div class="ci-cap">Baj Ltd sanitation worker</div>
+      </div>
+      <div class="ci" onclick="openLB(19)" style="grid-column:2;grid-row:2;min-height:0;background:#0d1e0b">
+        <video src="file:///C:/Users/serge/Downloads/Sukutera%20Other%20images/WhatsApp%20Video%202026-05-07%20at%2015.35.28.mp4"
+               muted loop autoplay playsinline style="height:100%;object-position:center"></video>
+        <div class="ci-play">▶</div>
+        <div class="ci-hint">▶ Play</div>
+        <div class="ci-cap">Field footage — community</div>
+      </div>
+      <div style="position:absolute;inset:0;background:linear-gradient(to right,transparent 68%,#0A1408 100%);pointer-events:none;z-index:1"></div>
+    </div>
+
+    <!-- Right: community story -->
+    <div style="flex:1;padding:22px 26px;overflow-y:auto;display:flex;flex-direction:column;justify-content:center">
+      <div class="eye">Community Engagement</div>
+      <h2>30 people trusted us with their story</h2>
+      <p class="body" style="margin-bottom:14px">We didn't design from a desk. We went to the lake — multiple times — and listened. Every insight in this platform came from real conversations with the people who live alongside the pollution every day.</p>
+
+      <div style="margin-bottom:12px">
+        <div class="row-i"><div class="adot"></div><div class="rit"><div class="name">Baj Ltd waste collectors</div><div class="sub">Multiple interviews · verbal pilot agreement confirmed</div></div></div>
+        <div class="row-i"><div class="adot"></div><div class="rit"><div class="name">Cell leader — local official</div><div class="sub">Signed location release + formal support letter</div></div></div>
+        <div class="row-i"><div class="adot"></div><div class="rit"><div class="name">Restaurant manager</div><div class="sub">Confirmed waste flow + signed release form</div></div></div>
+        <div class="row-i"><div class="adot bl"></div><div class="rit"><div class="name" style="color:#48CAE4">Community residents — 4 interviews</div><div class="sub">Saga Bay area — lived experience of lake pollution</div></div></div>
+        <div class="row-i"><div class="adot am"></div><div class="rit"><div class="name" style="color:#D4A373">30 signed NatGeo release forms</div><div class="sub">All documentation requirements fully met</div></div></div>
+      </div>
+
+      <div class="quote" style="margin-bottom:12px">
+        <p>They're already doing the work. They just have no way to prove it — no data, no record, no recognition. Sukutera gives them that.</p>
+        <div class="attr">— Researcher observation, Saga Bay field visit</div>
+      </div>
+      <div class="callout">7 ethnographic field visits · Video footage captured · All NatGeo documentation standards met</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 4 — THE COLLECTORS AT WORK
+════════════════════════════════════════ -->
+<div class="slide" id="s3">
+  <div style="display:flex;flex:1;overflow:hidden">
+    <!-- 6-photo grid -->
+    <div style="flex:0 0 54%;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;overflow:hidden">
+      <div class="ci" onclick="openLB(17)" style="height:100%">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Other%20images/WhatsApp%20Image%202026-05-07%20at%2015.35.20.jpeg" style="object-position:center 70%" />
+        <div class="ci-hint">🔍</div>
+        <div class="ci-cap">Shoreline — collector in bg</div>
+      </div>
+      <div class="ci" onclick="openLB(9)" style="height:100%">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.50.jpeg" style="object-position:center top" />
+        <div class="ci-hint">🔍</div>
+        <div class="ci-cap">Collector at lake's edge</div>
+      </div>
+      <div class="ci" onclick="openLB(7)" style="height:100%">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.50%20(1).jpeg" />
+        <div class="ci-hint">🔍</div>
+        <div class="ci-cap">Aerial — collection in progress</div>
+      </div>
+      <div class="ci" onclick="openLB(13)" style="height:100%">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.51.jpeg" />
+        <div class="ci-hint">🔍</div>
+        <div class="ci-cap">PET bottles collected</div>
+      </div>
+      <div class="ci" onclick="openLB(10)" style="height:100%">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.51%20(1).jpeg" />
+        <div class="ci-hint">🔍</div>
+        <div class="ci-cap">A day's collection — sacked</div>
+      </div>
+      <div class="ci" onclick="openLB(18)" style="height:100%">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Other%20images/WhatsApp%20Image%202026-05-07%20at%2015.35.20%20(1).jpeg" />
+        <div class="ci-hint">🔍</div>
+        <div class="ci-cap">Collected plastic — ready to log</div>
+      </div>
+    </div>
+    <div style="flex:1;padding:22px 26px;display:flex;flex-direction:column;justify-content:center;overflow-y:auto">
+      <div class="eye">The Collectors</div>
+      <h2>Baj Ltd — the infrastructure already exists</h2>
+      <p class="body" style="margin-bottom:12px">These collectors go into the lake daily with no equipment, no records, and no recognition. They already have the system. They just lack the data layer.</p>
+      <table style="margin-bottom:12px">
+        <thead><tr><th>Finding</th><th>Implication</th></tr></thead>
+        <tbody>
+          <tr><td>Baj Ltd already collects daily</td><td class="ok">Infrastructure exists</td></tr>
+          <tr><td>Zero sorting at point of collection</td><td class="am">Recycling chain is broken</td></tr>
+          <tr><td>No destination tracking</td><td class="am">Zero traceability</td></tr>
+          <tr><td>PET &amp; HDPE bottles dominant</td><td class="ok">High recycler demand</td></tr>
+          <tr><td>Community open to technology</td><td class="ok">Adoption risk is low</td></tr>
+        </tbody>
+      </table>
+      <div class="callout">Collectors verbally confirmed: <em>"If Sukutera brings us fair recognition for our work, we will use it."</em><br><br><span style="font-size:11px;color:rgba(255,255,255,0.38)">Click any photo to view full size →</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 5 — THE PIVOT
+════════════════════════════════════════ -->
+<div class="slide" id="s4">
+  <div class="split" style="flex:1">
+    <div class="split-imgs" style="flex:0 0 38%">
+      <div class="ci" onclick="openLB(14)" style="flex:52%;min-height:0">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.52.jpeg" style="height:100%" />
+        <div class="ci-hint">🔍 Full view</div>
+        <div class="ci-cap">Baj Ltd waste shelter — Rubavu site</div>
+      </div>
+      <div class="ci" onclick="openLB(20)" style="flex:48%;min-height:0;background:#0d1e0b">
+        <video src="file:///C:/Users/serge/Downloads/Sukutera%20Other%20images/WhatsApp%20Video%202026-05-07%20at%2015.35.28%20(1).mp4"
+               muted loop autoplay playsinline style="height:100%" />
+        <div class="ci-play">▶</div>
+        <div class="ci-hint">▶ Play full</div>
+        <div class="ci-cap">Field footage — Rubavu visit</div>
+      </div>
+      <div class="fade-r"></div>
+    </div>
+    <div style="flex:1;padding:22px 28px;overflow-y:auto;display:flex;flex-direction:column;justify-content:center">
+      <div class="eye">The Pivot</div>
+      <h2>Why software — not IoT hardware</h2>
+      <div class="callout bl" style="margin-bottom:14px">The field research revealed the core barrier is not collection — Baj Ltd already collects. The barrier is <strong>invisibility</strong>. Hardware without intelligence solves nothing.</div>
+      <div class="g2" style="margin-bottom:12px">
+        <div class="card">
+          <h3>❌ Original: IoT Sensors</h3>
+          <p style="margin-bottom:6px">Deploy sensors along the shoreline to detect plastic density.</p>
+          <p style="color:rgba(220,90,90,0.75);font-size:11px">— No data infrastructure to connect to<br>— Can't sort or classify waste<br>— High cost, low community buy-in<br>— Doesn't solve traceability</p>
+        </div>
+        <div class="card hl">
+          <h3>✅ New: Data Platform</h3>
+          <p style="margin-bottom:6px">Make the existing system measurable, incentivised, and fundable.</p>
+          <p style="color:rgba(82,183,136,0.9);font-size:11px">+ Directly addresses the data gap<br>+ Community-operated from day one<br>+ Enables future IoT on solid foundation<br>+ Proof of concept built and validated</p>
+        </div>
+      </div>
+      <p style="font-style:italic;color:rgba(255,255,255,0.38);font-size:11px;line-height:1.6">Top: the Baj Ltd collection shelter — the infrastructure that already exists. The video below shows what we observed on the ground. Sukutera makes it legible and fundable.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 6 — THE PLATFORM
+════════════════════════════════════════ -->
+<div class="slide" id="s5">
+  <div class="split" style="flex:1">
+    <div style="flex:0 0 34%;display:flex;flex-direction:column;overflow:hidden;position:relative">
+      <div class="ci" onclick="openLB(15)" style="flex:1;min-height:0;background:#0d1e0b">
+        <video src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Video%202026-05-07%20at%2012.16.52.mp4"
+               muted loop autoplay playsinline style="height:100%;object-position:center"></video>
+        <div class="ci-play">▶</div>
+        <div class="ci-hint">▶ Open full</div>
+        <div class="ci-cap">Field footage — Lake Kivu shoreline</div>
+      </div>
+      <div class="ci" onclick="openLB(3)" style="height:120px;flex-shrink:0">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.49%20(1).jpeg" />
+        <div class="ci-hint">🔍</div>
+        <div class="ci-cap">Plastic in forest stream</div>
+      </div>
+      <div style="position:absolute;inset:0;background:linear-gradient(to right,transparent 68%,#0A1408 100%);pointer-events:none"></div>
+    </div>
+    <div style="flex:1;padding:20px 26px;overflow-y:auto;display:flex;flex-direction:column;justify-content:center">
+      <div class="eye">The Solution</div>
+      <h2 style="margin-bottom:9px">Sukutera — 5 modules, live today</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px">
+        <div class="mc"><div class="mc-icon">🗺️</div><div><div class="mc-t">Live Map</div><div class="mc-b">GPS pins color-coded by plastic type. Real-time as collections come in.</div></div></div>
+        <div class="mc"><div class="mc-icon">📥</div><div><div class="mc-t">Log Collection</div><div class="mc-b">Submit weight + type + GPS. Points calculated instantly.</div></div></div>
+        <div class="mc"><div class="mc-icon">🏆</div><div><div class="mc-t">Leaderboard</div><div class="mc-b">Top collectors by points. Filter by district. Community competition.</div></div></div>
+        <div class="mc"><div class="mc-icon">📊</div><div><div class="mc-t">Impact Dashboard</div><div class="mc-b">Total kg diverted, 30-day timeline, plastic breakdown by type.</div></div></div>
+        <div class="mc"><div class="mc-icon">▶️</div><div><div class="mc-t">Live Demo Mode</div><div class="mc-b">Real-time simulation with toast notifications — built for this presentation.</div></div></div>
+        <div class="mc" style="background:rgba(82,183,136,0.07);border-color:rgba(82,183,136,0.18)">
+          <div class="mc-icon">💰</div>
+          <div>
+            <div class="mc-t">Points Engine</div>
+            <div class="mc-b">PET 10 pts · HDPE 8 pts · Mixed 5 pts · Other 3 pts /kg</div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-bar">
+        <div class="stat"><div class="v" style="font-size:13px;color:#fff">React + Vite</div><div class="l">Frontend</div></div>
+        <div class="stat"><div class="v" style="font-size:13px;color:#fff">Supabase</div><div class="l">Backend</div></div>
+        <div class="stat"><div class="v" style="font-size:13px;color:#fff">Mapbox GL</div><div class="l">Map</div></div>
+        <div class="stat"><div class="v" style="font-size:13px;color:#fff">GitHub</div><div class="l">Deployed</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 6 — STAKEHOLDER ECOSYSTEM
+════════════════════════════════════════ -->
+<div class="slide" id="s6">
+  <div class="pad" style="flex:1;overflow-y:auto">
+    <div class="eye">The Ecosystem</div>
+    <h2 style="margin-bottom:4px">Who makes this circular economy work</h2>
+    <p class="body" style="margin-bottom:14px;max-width:700px">Sukutera sits at the centre — connecting community collectors to verified off-takers. Every company below is real, operating in Rwanda, and a potential partner in the value chain.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+
+      <!-- Column 1: Collection -->
+      <div>
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(82,183,136,0.15);border:1px solid rgba(82,183,136,0.3);display:flex;align-items:center;justify-content:center;font-size:14px">🏗️</div>
+          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#52B788">Waste Collectors</span>
+        </div>
+
+        <div class="card" style="margin-bottom:8px;border-color:rgba(82,183,136,0.22)">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+            <h3 style="color:#52B788;margin:0">Baj Ltd</h3>
+            <span class="pill" style="margin:0;font-size:10px">Pilot Partner</span>
+          </div>
+          <p>Rubavu, Western Province. Local waste collector operating directly on the Lake Kivu shoreline. <strong style="color:rgba(255,255,255,0.75)">Verbal pilot agreement confirmed</strong> — our primary field partner.</p>
+        </div>
+
+        <div class="card" style="border-color:rgba(82,183,136,0.14)">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+            <h3 style="color:#52B788;margin:0">AGRUNI Group</h3>
+            <span style="padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;background:rgba(212,163,115,0.15);color:#D4A373;border:1px solid rgba(212,163,115,0.25)">Founded in Rubavu</span>
+          </div>
+          <p>Est. 2002 by Jean Paul Ngenzi Shiraniro in <strong style="color:rgba(255,255,255,0.7)">Rubavu District</strong> — our exact field site. Largest waste collection and sorting company in East Africa. 1,700+ employees. Operates in Rwanda and DRC.</p>
+          <p style="margin-top:5px;color:rgba(72,202,228,0.8);font-size:11px">→ The natural aggregation partner for Sukutera's collection layer.</p>
+        </div>
+      </div>
+
+      <!-- Column 2: Plastic Recyclers -->
+      <div>
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(72,202,228,0.12);border:1px solid rgba(72,202,228,0.25);display:flex;align-items:center;justify-content:center;font-size:14px">♻️</div>
+          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#48CAE4">Plastic Recyclers</span>
+        </div>
+
+        <div class="card" style="margin-bottom:8px">
+          <h3 style="color:#48CAE4">EcoPlastic Rwanda</h3>
+          <p>Processes ~<strong style="color:rgba(255,255,255,0.7)">88 tons of plastic/year</strong>. Sources from collectors, hospitals, airports. Produces new plastic for agriculture and construction. <em>ecoplasticrwanda.com</em></p>
+        </div>
+
+        <div class="card" style="margin-bottom:8px">
+          <h3 style="color:#48CAE4">AgroPlast Ltd</h3>
+          <p>Gahanga Industrial Zone, Kicukiro. Est. 2015. Transforms plastic waste into <strong style="color:rgba(255,255,255,0.7)">trash bags, agricultural tubing, and energy-saving cookstoves</strong>. <em>agroplastrwanda.org</em></p>
+        </div>
+
+        <div class="card">
+          <h3 style="color:#48CAE4">Depot Kalisimbi</h3>
+          <p>Specifically sorts and valorizes <strong style="color:rgba(255,255,255,0.7)">PET and HDPE containers</strong> — the exact plastic types dominant in Lake Kivu waste. Direct match for Sukutera's sorting data. <em>depotkalisimbi.org</em></p>
+        </div>
+      </div>
+
+      <!-- Column 3: Compost / Organic -->
+      <div>
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(212,163,115,0.12);border:1px solid rgba(212,163,115,0.25);display:flex;align-items:center;justify-content:center;font-size:14px">🌿</div>
+          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#D4A373">Compost &amp; Organic</span>
+        </div>
+
+        <div class="card" style="margin-bottom:8px">
+          <h3 style="color:#D4A373">GreenCare Rwanda Ltd</h3>
+          <p>Converts 100% of bio-waste into <strong style="color:rgba(255,255,255,0.7)">"Grekompost"</strong> organic fertilizer. Promotes sorting and sale of recyclable materials. Consultancy on waste management infrastructure. <em>greencarerwandaltd.com</em></p>
+        </div>
+
+        <div class="card" style="margin-bottom:8px">
+          <h3 style="color:#D4A373">Bidec Group Ltd</h3>
+          <p>Kigali. Converts biodegradable market and dumpsite waste into <strong style="color:rgba(255,255,255,0.7)">high-quality organic compost</strong>. Sells to farmers, cooperatives, and agro-dealers at affordable prices.</p>
+        </div>
+
+        <div class="card">
+          <h3 style="color:#D4A373">Vermifarm Ltd</h3>
+          <p>Founded by Vincent Sindikubwabo. Uses earthworms to produce <strong style="color:rgba(255,255,255,0.7)">60 tons fertilizer + 3,600L pesticide/month</strong> from organic residues. Circular end-to-end model.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Value chain banner -->
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.35);margin-bottom:8px">Sukutera's position in the value chain</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div style="background:rgba(82,183,136,0.1);border:1px solid rgba(82,183,136,0.2);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;color:#52B788">🏗️ Baj Ltd / AGRUNI<br><span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.45)">Collect from Lake Kivu</span></div>
+        <div style="color:rgba(255,255,255,0.25);font-size:18px">→</div>
+        <div style="background:rgba(72,202,228,0.1);border:1px solid rgba(72,202,228,0.2);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;color:#48CAE4">📱 SUKUTERA<br><span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.45)">Log · Sort · Incentivise</span></div>
+        <div style="color:rgba(255,255,255,0.25);font-size:18px">→</div>
+        <div style="background:rgba(72,202,228,0.08);border:1px solid rgba(72,202,228,0.15);border-radius:6px;padding:6px 12px;font-size:11px;color:rgba(255,255,255,0.6)">♻️ EcoPlastic / AgroPlast<br><span style="font-size:10px;color:rgba(255,255,255,0.38)">Buy PET &amp; HDPE</span></div>
+        <div style="color:rgba(255,255,255,0.25);font-size:18px">+</div>
+        <div style="background:rgba(212,163,115,0.08);border:1px solid rgba(212,163,115,0.15);border-radius:6px;padding:6px 12px;font-size:11px;color:rgba(255,255,255,0.6)">🌿 GreenCare / Bidec<br><span style="font-size:10px;color:rgba(255,255,255,0.38)">Process organic waste</span></div>
+        <div style="color:rgba(255,255,255,0.25);font-size:18px">→</div>
+        <div style="background:rgba(82,183,136,0.06);border:1px solid rgba(82,183,136,0.12);border-radius:6px;padding:6px 12px;font-size:11px;color:rgba(255,255,255,0.6)">💰 Revenue closes loop<br><span style="font-size:10px;color:rgba(255,255,255,0.38)">Collectors earn · Lake recovers</span></div>
+      </div>
+      <div style="margin-top:9px;font-size:11px;color:rgba(255,255,255,0.38);font-style:italic">⭐ AGRUNI Group was founded in Rubavu District in 2002 — the same district as our field site. This is the most natural aggregation partner for Sukutera.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 7 — DELIVERY + BUDGET ACCOUNTABILITY
+════════════════════════════════════════ -->
+<div class="slide" id="s7">
+  <div class="split" style="flex:1">
+    <div style="flex:0 0 34%;display:flex;flex-direction:column;overflow:hidden;position:relative">
+      <div class="ci" onclick="openLB(16)" style="flex:1;min-height:0;background:#0d1e0b">
+        <video src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Video%202026-05-07%20at%2012.16.52%20(1).mp4"
+               muted loop autoplay playsinline style="height:100%" />
+        <div class="ci-play">▶</div>
+        <div class="ci-hint">▶ Open full</div>
+        <div class="ci-cap">Field footage — collection in action</div>
+      </div>
+      <div class="ci" onclick="openLB(11)" style="height:120px;flex-shrink:0">
+        <img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.51%20(2).jpeg" style="object-position:center top" />
+        <div class="ci-hint">🔍</div>
+        <div class="ci-cap">Release forms — documentation session</div>
+      </div>
+      <div style="position:absolute;inset:0;background:linear-gradient(to right,transparent 68%,#0A1408 100%);pointer-events:none"></div>
+    </div>
+    <div style="flex:1;padding:20px 26px;overflow-y:auto">
+      <div class="eye">Delivery &amp; Budget Accountability</div>
+      <h2 style="margin-bottom:12px">What we built · How we spent it</h2>
+      <div class="g2" style="margin-bottom:14px">
+        <!-- Deliverables -->
+        <div>
+          <h3 style="margin-bottom:7px">What Was Delivered</h3>
+          <table>
+            <thead><tr><th>Item</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>7 ethnographic field visits</td><td class="ok">✓</td></tr>
+              <tr><td>30 signed NatGeo releases</td><td class="ok">✓</td></tr>
+              <tr><td>Location release + support letter</td><td class="ok">✓</td></tr>
+              <tr><td>Baj Ltd pilot partner identified</td><td class="ok">✓</td></tr>
+              <tr><td>Full web platform (5 modules)</td><td class="ok">✓</td></tr>
+              <tr><td>Supabase database schema</td><td class="ok">✓</td></tr>
+              <tr><td>Deployed on GitHub</td><td class="ok">✓</td></tr>
+              <tr><td>Video footage captured</td><td class="ok">✓</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Budget breakdown -->
+        <div>
+          <h3 style="margin-bottom:10px">Budget — $2,000</h3>
+          <div class="bbar-row">
+            <div class="bbar-label"><span>Field Activities (visits, community, incentives)</span><span>$1,045 · 55%</span></div>
+            <div class="bbar-track"><div class="bbar-fill" style="width:55%;background:linear-gradient(90deg,#52B788,#2fad6e)"></div></div>
+          </div>
+          <div class="bbar-row">
+            <div class="bbar-label"><span>App / Platform Development</span><span>$570 · 30%</span></div>
+            <div class="bbar-track"><div class="bbar-fill" style="width:30%;background:linear-gradient(90deg,#2196A6,#48CAE4)"></div></div>
+          </div>
+          <div class="bbar-row">
+            <div class="bbar-label"><span>Research Ops (printing, airtime, travel)</span><span>$209 · 11%</span></div>
+            <div class="bbar-track"><div class="bbar-fill" style="width:11%;background:linear-gradient(90deg,#D4A373,#e8bf8a)"></div></div>
+          </div>
+          <div class="bbar-row">
+            <div class="bbar-label"><span>Admin &amp; Miscellaneous</span><span>$76 · 4%</span></div>
+            <div class="bbar-track"><div class="bbar-fill" style="width:4%;background:rgba(255,255,255,0.3)"></div></div>
+          </div>
+          <hr />
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span style="font-size:12px;color:rgba(255,255,255,0.55)">Total spent</span>
+            <span style="font-size:18px;font-weight:800;color:#52B788">$1,900 <span style="font-size:12px;color:rgba(255,255,255,0.35)">/ $2,000</span></span>
+          </div>
+          <div style="background:rgba(82,183,136,0.07);border:1px solid rgba(82,183,136,0.18);border-radius:7px;padding:8px 11px;margin-top:8px;font-size:11px;color:rgba(255,255,255,0.55);line-height:1.6">
+            $100 remaining. The $570 app line covers the CS student's development labor — a standard and legitimate grant category. Field incentives covered 30+ signed releases across multiple community touchpoints.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SLIDE 9 — NEXT STEPS
+════════════════════════════════════════ -->
+<div class="slide" id="s8">
+  <div class="pad" style="flex:1;overflow-y:auto">
+    <div class="eye">Path Forward</div>
+    <h2 style="margin-bottom:13px">What happens before July 1st</h2>
+    <div class="g2" style="margin-bottom:13px">
+      <div>
+        <h3 style="margin-bottom:10px">Immediate Next Steps</h3>
+        <div class="step"><span class="stag">Technical</span><div class="stxt">Connect live Supabase credentials + deploy public demo URL</div></div>
+        <div class="step"><span class="stag">Technical</span><div class="stxt">Add Mapbox token for live map rendering</div></div>
+        <div class="step"><span class="stag">Partnership</span><div class="stxt">Confirm Baj Ltd industrial recycler off-taker destination</div></div>
+        <div class="step"><span class="stag">Validation</span><div class="stxt">Run first real logged collection with pilot user on app</div></div>
+        <div class="step"><span class="stag">Pitch</span><div class="stxt">Record 2-min platform walkthrough video for funders</div></div>
+        <div class="step"><span class="stag">Expansion</span><div class="stxt">Recruit pilot collectors in Karongi and Rusizi districts</div></div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:8px">The Circular Economy Loop</h3>
+        <table style="margin-bottom:10px">
+          <thead><tr><th>Step</th><th>Actor</th><th>Output</th></tr></thead>
+          <tbody>
+            <tr><td>Collect</td><td>Baj Ltd + community</td><td>Sorted plastic</td></tr>
+            <tr><td>Log</td><td>Sukutera app</td><td>GPS-tagged weight data</td></tr>
+            <tr><td>Earn</td><td>Collectors</td><td>Points → value</td></tr>
+            <tr><td>Sell</td><td>Recycler off-taker</td><td>Revenue closes loop</td></tr>
+            <tr class="hl"><td>Prove</td><td>Dashboard</td><td>Impact data for funders</td></tr>
+          </tbody>
+        </table>
+        <div class="callout">July 1st goal: verified kg diverted from Lake Kivu + confirmed industrial recycler — proving the model is self-sustaining without constant external oversight.</div>
+      </div>
+    </div>
+    <!-- Photo strip -->
+    <hr />
+    <div style="display:flex;gap:7px;overflow-x:auto;padding:2px 0 6px;align-items:center">
+      <div class="ci" onclick="openLB(17)" style="width:110px;height:66px;border-radius:6px;flex-shrink:0"><img src="file:///C:/Users/serge/Downloads/Sukutera%20Other%20images/WhatsApp%20Image%202026-05-07%20at%2015.35.20.jpeg" /><div class="ci-hint">🔍</div></div>
+      <div class="ci" onclick="openLB(8)"  style="width:110px;height:66px;border-radius:6px;flex-shrink:0"><img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.50%20(2).jpeg" style="object-position:top" /><div class="ci-hint">🔍</div></div>
+      <div class="ci" onclick="openLB(9)"  style="width:110px;height:66px;border-radius:6px;flex-shrink:0"><img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.50.jpeg" style="object-position:top" /><div class="ci-hint">🔍</div></div>
+      <div class="ci" onclick="openLB(11)" style="width:110px;height:66px;border-radius:6px;flex-shrink:0"><img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.51%20(2).jpeg" style="object-position:top" /><div class="ci-hint">🔍</div></div>
+      <div class="ci" onclick="openLB(14)" style="width:110px;height:66px;border-radius:6px;flex-shrink:0"><img src="file:///C:/Users/serge/Downloads/Sukutera%20Images/WhatsApp%20Image%202026-05-07%20at%2012.16.52.jpeg" /><div class="ci-hint">🔍</div></div>
+      <div class="ci" onclick="openLB(18)" style="width:110px;height:66px;border-radius:6px;flex-shrink:0"><img src="file:///C:/Users/serge/Downloads/Sukutera%20Other%20images/WhatsApp%20Image%202026-05-07%20at%2015.35.20%20(1).jpeg" /><div class="ci-hint">🔍</div></div>
+      <div class="ci" onclick="openLB(19)" style="width:110px;height:66px;border-radius:6px;flex-shrink:0;background:#1a2e18;display:flex;align-items:center;justify-content:center;font-size:20px;color:rgba(255,255,255,0.5)">▶<div class="ci-hint">▶</div></div>
+      <div class="ci" onclick="openLB(20)" style="width:110px;height:66px;border-radius:6px;flex-shrink:0;background:#1a2e18;display:flex;align-items:center;justify-content:center;font-size:20px;color:rgba(255,255,255,0.5)">▶<div class="ci-hint">▶</div></div>
+    </div>
+    <hr />
+    <div style="text-align:center;padding:6px 0">
+      <div style="font-size:20px;font-weight:900;color:#52B788;letter-spacing:-0.01em">SUKUTERA</div>
+      <p style="font-size:11px;color:rgba(255,255,255,0.32);margin-top:3px">Track. Sort. Sustain. · Lake Kivu, Rwanda · NatGeo Society · The Nature Conservancy</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /stage -->
+
+<div id="nav">
+  <button class="btn btn-s" id="pb" onclick="go(-1)" disabled>← Prev</button>
+  <div class="dots" id="dots"></div>
+  <button class="btn btn-p" id="nb" onclick="go(1)">Next →</button>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lb">
+  <button id="lb-x" onclick="closeLB()">✕</button>
+  <div id="lb-main">
+    <button class="lba" id="lb-prev" onclick="lbGo(-1)">‹</button>
+    <div id="lb-mw"></div>
+    <button class="lba" id="lb-next" onclick="lbGo(1)">›</button>
+  </div>
+  <div id="lb-info">
+    <div id="lb-cap"></div>
+    <div id="lb-ctr"></div>
+  </div>
+  <div id="lb-thumbs"></div>
+</div>
+
+<script>
+// ── Slides ──
+let cur=0,total=9;
+(function(){
+  const c=document.getElementById('dots');
+  for(let i=0;i<total;i++){
+    const d=document.createElement('button');
+    d.className='dot'+(i===0?' active':'');
+    d.onclick=()=>goTo(i);
+    c.appendChild(d);
+  }
+})();
+function goTo(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  document.querySelectorAll('.dot')[cur].classList.remove('active');
+  cur=Math.max(0,Math.min(total-1,n));
+  document.getElementById('s'+cur).classList.add('active');
+  document.querySelectorAll('.dot')[cur].classList.add('active');
+  document.getElementById('ctr').textContent=(cur+1)+' / '+total;
+  document.getElementById('prog-fill').style.width=((cur+1)/total*100)+'%';
+  document.getElementById('pb').disabled=cur===0;
+  document.getElementById('nb').disabled=cur===total-1;
+  document.getElementById('s'+cur).scrollTop=0;
+}
+function go(d){goTo(cur+d);}
+document.addEventListener('keydown',e=>{
+  const lb=document.getElementById('lb');
+  if(lb.classList.contains('show')){
+    if(e.key==='ArrowRight') lbGo(1);
+    if(e.key==='ArrowLeft')  lbGo(-1);
+    if(e.key==='Escape')     closeLB();
+  } else {
+    if(e.key==='ArrowRight'||e.key==='ArrowDown') go(1);
+    if(e.key==='ArrowLeft' ||e.key==='ArrowUp')   go(-1);
+  }
+});
+
+// ── Media library ──
+const B1='file:///C:/Users/serge/Downloads/Sukutera%20Images/';
+const B2='file:///C:/Users/serge/Downloads/Sukutera%20Other%20images/';
+const MEDIA=[
+  // 0-16: original images + videos
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.47%20(1).jpeg',c:'Plastic bottle floating in Lake Kivu — Saga Bay, Rubavu'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.47.jpeg',      c:'Plastic debris at the rocky shoreline'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.48.jpeg',      c:'PET bottle — one of hundreds collected daily from Lake Kivu'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.49%20(1).jpeg',c:'Plastic waste in a forest stream feeding into Lake Kivu'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.49%20(2).jpeg',c:'Plastic bags mixed with leaves — inflow stream'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.49%20(3).jpeg',c:'Plastic debris in the inflow stream'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.49.jpeg',      c:'Foam and contamination on Lake Kivu surface'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.50%20(1).jpeg',c:'Aerial view — collector extracting plastic from the water'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.50%20(2).jpeg',c:'Researcher interviewing a Baj Ltd waste collector, Rubavu'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.50.jpeg',      c:'Collector at the lake\'s edge — collecting plastic into a sack'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.51%20(1).jpeg',c:'A day\'s collected plastic — PET bottles and mixed waste'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.51%20(2).jpeg',c:'NatGeo release form documentation — signed on-site, Rubavu'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.51%20(3).jpeg',c:'Researcher speaking with a Baj Ltd sanitation worker on the road'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.51.jpeg',      c:'Collector demonstrating PET bottle collection to the researcher'},
+  {t:'img',s:B1+'WhatsApp%20Image%202026-05-07%20at%2012.16.52.jpeg',      c:'Existing waste collection shelter at the Baj Ltd site, Rubavu'},
+  {t:'vid',s:B1+'WhatsApp%20Video%202026-05-07%20at%2012.16.52.mp4',       c:'Field footage — Lake Kivu shoreline, Rubavu'},
+  {t:'vid',s:B1+'WhatsApp%20Video%202026-05-07%20at%2012.16.52%20(1).mp4', c:'Field footage — waste collection in action'},
+  // 17-20: new images + videos
+  {t:'img',s:B2+'WhatsApp%20Image%202026-05-07%20at%2015.35.20.jpeg',      c:'Lake Kivu shoreline — tree roots, rocks, foam. Collector visible in background.'},
+  {t:'img',s:B2+'WhatsApp%20Image%202026-05-07%20at%2015.35.20%20(1).jpeg',c:'Collected plastic in a sack — PET bottles ready for sorting'},
+  {t:'vid',s:B2+'WhatsApp%20Video%202026-05-07%20at%2015.35.28.mp4',       c:'Field footage — community engagement, Rubavu'},
+  {t:'vid',s:B2+'WhatsApp%20Video%202026-05-07%20at%2015.35.28%20(1).mp4', c:'Field footage — Rubavu field visit'},
+];
+
+// Build thumbnail strip
+(function(){
+  const strip=document.getElementById('lb-thumbs');
+  MEDIA.forEach((m,i)=>{
+    let el;
+    if(m.t==='img'){
+      el=document.createElement('img');
+      el.src=m.s; el.className='lbt';
+    } else {
+      el=document.createElement('div');
+      el.className='lbvt'; el.textContent='▶';
+    }
+    el.onclick=()=>{lbIdx=i;renderLB();};
+    strip.appendChild(el);
+  });
+})();
+
+let lbIdx=0;
+function openLB(idx){ lbIdx=idx; renderLB(); document.getElementById('lb').classList.add('show'); }
+function closeLB(){
+  document.getElementById('lb').classList.remove('show');
+  const v=document.querySelector('#lb-mw video'); if(v) v.pause();
+}
+function lbGo(d){ lbIdx=Math.max(0,Math.min(MEDIA.length-1,lbIdx+d)); renderLB(); }
+function renderLB(){
+  const m=MEDIA[lbIdx];
+  const wrap=document.getElementById('lb-mw');
+  const pv=wrap.querySelector('video'); if(pv) pv.pause();
+  if(m.t==='img'){
+    wrap.innerHTML=`<img src="${m.s}" alt="${m.c}" />`;
+  } else {
+    wrap.innerHTML=`<video src="${m.s}" controls autoplay style="max-height:66vh;max-width:82vw;border-radius:8px"></video>`;
+  }
+  document.getElementById('lb-cap').textContent=m.c;
+  document.getElementById('lb-ctr').textContent=(lbIdx+1)+' of '+MEDIA.length+' · ← → to navigate · Esc to close';
+  document.getElementById('lb-prev').disabled=lbIdx===0;
+  document.getElementById('lb-next').disabled=lbIdx===MEDIA.length-1;
+  const ts=document.getElementById('lb-thumbs').children;
+  for(let i=0;i<ts.length;i++) ts[i].classList.toggle('active',i===lbIdx);
+  if(ts[lbIdx]) ts[lbIdx].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+}
+</script>
+</body>
+</html>
