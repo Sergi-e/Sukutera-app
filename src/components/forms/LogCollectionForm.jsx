@@ -13,11 +13,12 @@ const INITIAL = {
   district: '',
 }
 
-export default function LogCollectionForm({ onSuccess }) {
+export default function LogCollectionForm({ onSuccess, onPlasticTypeChange }) {
   const [form, setForm] = useState(INITIAL)
   const [status, setStatus] = useState(null) // 'loading' | 'success' | 'error'
   const [errorMsg, setErrorMsg] = useState('')
   const [locating, setLocating] = useState(false)
+  const [lastEarnedPoints, setLastEarnedPoints] = useState(0)
 
   const pointsPreview = form.weight_kg && form.plastic_type
     ? calculatePoints(parseFloat(form.weight_kg) || 0, form.plastic_type)
@@ -66,9 +67,12 @@ export default function LogCollectionForm({ onSuccess }) {
       district: form.district,
     }
 
+    const earned = calculatePoints(payload.weight_kg, payload.plastic_type)
+
     if (!supabase) {
       // Demo mode — no Supabase connected
       await new Promise((r) => setTimeout(r, 700))
+      setLastEarnedPoints(earned)
       setStatus('success')
       setForm(INITIAL)
       onSuccess?.()
@@ -80,14 +84,14 @@ export default function LogCollectionForm({ onSuccess }) {
       if (colErr) throw colErr
 
       if (form.collector_id) {
-        const pts = calculatePoints(payload.weight_kg, payload.plastic_type)
         await supabase.rpc('increment_collector_stats', {
           p_collector_id: form.collector_id,
           p_kg: payload.weight_kg,
-          p_pts: pts,
+          p_pts: earned,
         })
       }
 
+      setLastEarnedPoints(earned)
       setStatus('success')
       setForm(INITIAL)
       onSuccess?.()
@@ -154,7 +158,10 @@ export default function LogCollectionForm({ onSuccess }) {
             <button
               key={type}
               type="button"
-              onClick={() => setForm((prev) => ({ ...prev, plastic_type: type }))}
+              onClick={() => {
+                setForm((prev) => ({ ...prev, plastic_type: type }))
+                onPlasticTypeChange?.(type)
+              }}
               className="p-3 rounded-xl text-sm font-medium text-left transition-all duration-150"
               style={{
                 background: form.plastic_type === type ? `${info.color}25` : 'rgba(255,255,255,0.04)',
@@ -274,8 +281,18 @@ export default function LogCollectionForm({ onSuccess }) {
 
       {/* Success */}
       {status === 'success' && (
-        <div className="rounded-xl p-3 text-sm" style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', color: '#6EE7B7' }}>
-          ✅ Collection logged successfully!
+        <div
+          className="rounded-xl p-4 text-sm"
+          style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)' }}
+        >
+          <div style={{ color: '#6EE7B7', fontWeight: 700, marginBottom: 4 }}>
+            ✅ Collection logged successfully!
+          </div>
+          {lastEarnedPoints > 0 && (
+            <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: 12 }}>
+              +{lastEarnedPoints} points earned · routed to ecosystem off-takers
+            </div>
+          )}
         </div>
       )}
 
