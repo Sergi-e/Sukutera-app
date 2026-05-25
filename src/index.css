@@ -38,24 +38,103 @@ body {
   flex-direction: column;
 }
 
-/* Mapbox overrides */
-.mapboxgl-map {
-  font-family: 'Inter', sans-serif !important;
+/* Leaflet live map — dark theme */
+.live-map-wrap {
+  width: 100%;
+  height: 100%;
 }
 
-.mapboxgl-ctrl-logo {
-  display: none !important;
+.live-map-wrap .live-map-container {
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg);
+  font-family: 'Inter', sans-serif;
 }
 
-.mapboxgl-popup-content {
-  background: transparent !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
+.live-map-wrap .leaflet-tile-pane {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
 
-.mapboxgl-popup-tip {
-  display: none !important;
+.live-map-wrap .leaflet-control-zoom a {
+  background: rgba(15, 42, 61, 0.95);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.live-map-wrap .leaflet-control-zoom a:hover {
+  background: rgba(20, 47, 69, 0.98);
+  color: var(--color-accent);
+}
+
+.live-map-wrap .leaflet-control-attribution {
+  background: rgba(11, 31, 46, 0.85) !important;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 10px;
+}
+
+.live-map-wrap .leaflet-control-attribution a {
+  color: rgba(96, 165, 250, 0.85);
+}
+
+.live-map-wrap .leaflet-popup-content-wrapper {
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  color: #fff;
+}
+
+.live-map-wrap .leaflet-popup-tip {
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.live-map-wrap .leaflet-popup-content {
+  margin: 0;
+  min-width: 180px;
+}
+
+.live-map-popup {
+  padding: 14px;
+}
+
+.live-map-popup__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.live-map-popup__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.live-map-popup__type {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.live-map-popup__name {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 6px;
+}
+
+.live-map-popup__weight {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--color-accent);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.live-map-popup__district {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
 }
 
 /* Scrollbar */
