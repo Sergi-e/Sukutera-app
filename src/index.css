@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
+@import 'leaflet/dist/leaflet.css';
 
 :root {
   --color-primary: #0A7C6E;
@@ -38,24 +39,125 @@ body {
   flex-direction: column;
 }
 
-/* Mapbox overrides */
-.mapboxgl-map {
-  font-family: 'Inter', sans-serif !important;
+/* Smart navbar — hide on scroll down, show on scroll up */
+.navbar-smart {
+  transform: translateY(0);
+  transition: transform 0.3s ease, padding 0.3s ease, background 0.3s ease;
 }
 
-.mapboxgl-ctrl-logo {
-  display: none !important;
+.navbar-smart--hidden {
+  transform: translateY(-100%);
 }
 
-.mapboxgl-popup-content {
-  background: transparent !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
+/* Scroll reveal animations */
+.scroll-reveal {
+  opacity: 0;
+  transition: opacity 0.65s ease, transform 0.65s ease;
+  will-change: opacity, transform;
 }
 
-.mapboxgl-popup-tip {
-  display: none !important;
+.scroll-reveal--fade-up {
+  transform: translateY(30px);
+}
+
+.scroll-reveal--fade-left {
+  transform: translateX(-30px);
+}
+
+.scroll-reveal--fade-right {
+  transform: translateX(30px);
+}
+
+.scroll-reveal--visible {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* Page transitions */
+.page-transition {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.page-transition--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Value chain animated arrows */
+.value-chain-arrow {
+  color: rgba(10, 124, 110, 0.7);
+  font-size: 22px;
+  font-weight: 700;
+  animation: arrowPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes arrowPulse {
+  0%, 100% { opacity: 0.35; transform: translateX(0); }
+  50% { opacity: 1; transform: translateX(4px); }
+}
+
+/* Environmental equivalent cards */
+.env-equiv-card {
+  padding: 20px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  height: 100%;
+  animation: subtlePulse 3s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(10, 124, 110, 0); }
+  50% { box-shadow: 0 0 20px rgba(10, 124, 110, 0.12); }
+}
+
+.sukutera-map .leaflet-tile-pane {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+.sukutera-map .leaflet-container {
+  font-family: 'Inter', sans-serif;
+  background: #0B1F2E;
+}
+
+.sukutera-map .leaflet-control-attribution {
+  background: rgba(11, 31, 46, 0.85) !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.sukutera-map .leaflet-control-attribution a {
+  color: rgba(245, 230, 200, 0.7) !important;
+}
+
+.sukutera-popup {
+  font-family: 'Inter', sans-serif;
+  min-width: 160px;
+}
+
+.sukutera-popup__title {
+  font-weight: 700;
+  font-size: 13px;
+  color: #0B1F2E;
+  margin-bottom: 8px;
+}
+
+.sukutera-popup__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: rgba(11, 31, 46, 0.65);
+  margin-bottom: 4px;
+}
+
+.sukutera-popup__row strong {
+  color: #0B1F2E;
 }
 
 /* Scrollbar */
