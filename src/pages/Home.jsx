@@ -4,8 +4,10 @@ import { useCollections } from '../hooks/useCollections'
 import { useCollectors } from '../hooks/useCollectors'
 import { formatKg } from '../utils/formatters'
 import { DISTRICT_TARGETS } from '../lib/constants'
-import { STAKEHOLDERS } from '../lib/stakeholders'
 import { STAKEHOLDER_CATEGORIES, STAKEHOLDERS } from '../lib/stakeholders'
+import AnimateInView from '../components/ui/AnimateInView'
+import LiveActivityFeed from '../components/home/LiveActivityFeed'
+import WhyItMatters from '../components/home/WhyItMatters'
 
 function AnimatedNumber({ target, suffix = '' }) {
   const [value, setValue] = useState(0)
@@ -33,24 +35,24 @@ function AnimatedNumber({ target, suffix = '' }) {
   return <span>{value.toLocaleString()}{suffix}</span>
 }
 
-function StatCard({ icon, value, label, color, delay }) {
+function StatCard({ icon, value, label, color, index }) {
   return (
-    <div
-      className="animate-fade-up"
-      style={{
-        animationDelay: delay,
-        background: 'rgba(15,42,61,0.7)',
-        backdropFilter: 'blur(16px)',
-        border: `1px solid ${color}30`,
-        borderRadius: 16,
-        padding: '20px 16px',
-        textAlign: 'center',
-      }}
-    >
-      <div style={{ fontSize: 28, marginBottom: 8 }}>{icon}</div>
-      <div style={{ fontSize: 28, fontWeight: 900, color, lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: 13, marginTop: 6, color: 'rgba(255,255,255,0.55)' }}>{label}</div>
-    </div>
+    <AnimateInView variant="fade-up" delay={index * 100}>
+      <div
+        style={{
+          background: 'rgba(15,42,61,0.7)',
+          backdropFilter: 'blur(16px)',
+          border: `1px solid ${color}30`,
+          borderRadius: 16,
+          padding: '20px 16px',
+          textAlign: 'center',
+        }}
+      >
+        <div style={{ fontSize: 28, marginBottom: 8 }}>{icon}</div>
+        <div style={{ fontSize: 28, fontWeight: 900, color, lineHeight: 1 }}>{value}</div>
+        <div style={{ fontSize: 13, marginTop: 6, color: 'rgba(255,255,255,0.55)' }}>{label}</div>
+      </div>
+    </AnimateInView>
   )
 }
 
@@ -298,34 +300,36 @@ export default function Home() {
               value={<AnimatedNumber target={Math.round(totalKg * 10) / 10} suffix=" kg" />}
               label="Total KG Collected"
               color="#0A7C6E"
-              delay="0.5s"
+              index={0}
             />
             <StatCard
               icon="👥"
               value={<AnimatedNumber target={collectors.length} />}
               label="Active Collectors"
               color="#3B82F6"
-              delay="0.6s"
+              index={1}
             />
             <StatCard
               icon="🌊"
               value={<AnimatedNumber target={shorelineCoverage} suffix=" km" />}
               label="Shoreline Coverage"
               color="#F5E6C8"
-              delay="0.7s"
+              index={2}
             />
             <StatCard
               icon="🔗"
               value={<AnimatedNumber target={STAKEHOLDERS.length} />}
               label="Ecosystem Partners"
               color="#10B981"
-              delay="0.8s"
+              index={3}
             />
           </div>
         </div>
 
         {/* Scroll indicator */}
-        <div
+        <a
+          href="#districts"
+          aria-label="Scroll to districts"
           style={{
             position: 'absolute',
             bottom: 28,
@@ -333,47 +337,51 @@ export default function Home() {
             transform: 'translateX(-50%)',
             color: 'rgba(255,255,255,0.25)',
             animation: 'bounce 2s infinite',
+            textDecoration: 'none',
           }}
         >
           <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path d="M19 9l-7 7-7-7" />
           </svg>
-        </div>
+        </a>
       </section>
 
       {/* ─── DISTRICTS ──────────────────────────────────────────────────── */}
-      <section style={{ padding: '80px 24px', background: 'rgba(15,42,61,0.45)' }}>
+      <section id="districts" style={{ padding: '80px 24px', background: 'rgba(15,42,61,0.45)' }}>
         <div style={{ maxWidth: 1120, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 style={{ fontSize: 30, fontWeight: 900, color: '#FFFFFF', marginBottom: 10 }}>
-              3 Districts. One Lake.
-            </h2>
-            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15 }}>
-              Collection activity across the Lake Kivu shoreline
-            </p>
-          </div>
+          <AnimateInView variant="fade-left">
+            <div style={{ textAlign: 'center', marginBottom: 48 }}>
+              <h2 style={{ fontSize: 30, fontWeight: 900, color: '#FFFFFF', marginBottom: 10 }}>
+                3 Districts. One Lake.
+              </h2>
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15 }}>
+                Collection activity across the Lake Kivu shoreline
+              </p>
+            </div>
+          </AnimateInView>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
             {[
               { name: 'Rubavu', color: '#3B82F6', km: 28.4, target: 500, icon: '🌊', desc: 'Northern shore near Gisenyi, hub for tourism-related plastic recovery.' },
               { name: 'Karongi', color: '#10B981', km: 42.1, target: 750, icon: '⛵', desc: 'Western peninsula with longest shoreline and highest collection potential.' },
               { name: 'Rusizi', color: '#F59E0B', km: 35.7, target: 620, icon: '🦅', desc: 'Southern delta where the Rusizi River meets the lake — high inflow zone.' },
-            ].map((d) => {
+            ].map((d, di) => {
               const distKg = collections
                 .filter((c) => c.district === d.name)
                 .reduce((s, c) => s + (c.weight_kg || 0), 0)
               const pct = Math.min(Math.round((distKg / d.target) * 100), 100)
               return (
-                <div
-                  key={d.name}
-                  style={{
-                    background: 'rgba(15,42,61,0.7)',
-                    backdropFilter: 'blur(16px)',
-                    border: '1px solid rgba(255,255,255,0.07)',
-                    borderRadius: 16,
-                    padding: 24,
-                  }}
-                >
+                <AnimateInView key={d.name} variant="fade-up" delay={di * 100}>
+                  <div
+                    style={{
+                      background: 'rgba(15,42,61,0.7)',
+                      backdropFilter: 'blur(16px)',
+                      border: '1px solid rgba(255,255,255,0.07)',
+                      borderRadius: 16,
+                      padding: 24,
+                      height: '100%',
+                    }}
+                  >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
                     <span style={{ fontSize: 30 }}>{d.icon}</span>
                     <div>
@@ -391,24 +399,30 @@ export default function Home() {
                   <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.07)' }}>
                     <div style={{ height: 6, borderRadius: 3, width: `${pct}%`, background: d.color, transition: 'width 0.8s ease' }} />
                   </div>
-                </div>
+                  </div>
+                </AnimateInView>
               )
             })}
           </div>
         </div>
       </section>
 
+      <LiveActivityFeed collections={collections} collectors={collectors} />
+      <WhyItMatters />
+
       {/* ─── HOW IT WORKS ───────────────────────────────────────────────── */}
       <section style={{ padding: '80px 24px' }}>
         <div style={{ maxWidth: 1120, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 style={{ fontSize: 30, fontWeight: 900, color: '#FFFFFF', marginBottom: 10 }}>
-              How Sukutera Works
-            </h2>
-            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15 }}>
-              A simple loop that rewards conservation
-            </p>
-          </div>
+          <AnimateInView variant="fade-left">
+            <div style={{ textAlign: 'center', marginBottom: 48 }}>
+              <h2 style={{ fontSize: 30, fontWeight: 900, color: '#FFFFFF', marginBottom: 10 }}>
+                How Sukutera Works
+              </h2>
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15 }}>
+                A simple loop that rewards conservation
+              </p>
+            </div>
+          </AnimateInView>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
             {[
@@ -443,14 +457,16 @@ export default function Home() {
       {/* ─── ECOSYSTEM PREVIEW ──────────────────────────────────────────── */}
       <section style={{ padding: '80px 24px', background: 'rgba(15,42,61,0.45)' }}>
         <div style={{ maxWidth: 1120, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 style={{ fontSize: 30, fontWeight: 900, color: '#FFFFFF', marginBottom: 10 }}>
-              Partner Ecosystem
-            </h2>
-            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15, maxWidth: 520, margin: '0 auto' }}>
-              Collectors, recyclers, and compost processors working together across Rwanda&apos;s circular economy
-            </p>
-          </div>
+          <AnimateInView variant="fade-left">
+            <div style={{ textAlign: 'center', marginBottom: 48 }}>
+              <h2 style={{ fontSize: 30, fontWeight: 900, color: '#FFFFFF', marginBottom: 10 }}>
+                Partner Ecosystem
+              </h2>
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15, maxWidth: 520, margin: '0 auto' }}>
+                Collectors, recyclers, and compost processors working together across Rwanda&apos;s circular economy
+              </p>
+            </div>
+          </AnimateInView>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 32 }}>
             {Object.values(STAKEHOLDER_CATEGORIES).map((category) => {
