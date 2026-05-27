@@ -1,5 +1,6 @@
 import { useMemo, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import AnimateInView from '../ui/AnimateInView'
 import { formatKg, percentOf } from '../../utils/formatters'
 import { DISTRICT_TARGETS } from '../../lib/constants'
 import { STAKEHOLDERS } from '../../lib/stakeholders'
@@ -37,12 +38,11 @@ function AnimatedKg({ target }) {
   return <span>{formatKg(displayed)}</span>
 }
 
-function StatCard({ label, value, sub, color, delay, icon, highlight, href }) {
+function StatCard({ label, value, sub, color, icon, highlight, href, index }) {
   const inner = (
     <div
-      className="glass-card shimmer-border animate-fade-up"
+      className="glass-card shimmer-border"
       style={{
-        animationDelay: delay,
         padding: 24,
         transition: 'box-shadow 0.4s ease, transform 0.2s ease',
         boxShadow: highlight ? `0 0 28px ${color}55` : undefined,
@@ -74,15 +74,17 @@ function StatCard({ label, value, sub, color, delay, icon, highlight, href }) {
     </div>
   )
 
-  if (href) {
-    return (
-      <Link to={href} style={{ textDecoration: 'none', display: 'block' }}>
-        {inner}
-      </Link>
-    )
-  }
+  const card = href ? (
+    <Link to={href} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
+      {inner}
+    </Link>
+  ) : inner
 
-  return inner
+  return (
+    <AnimateInView variant="fade-up" delay={index * 100}>
+      {card}
+    </AnimateInView>
+  )
 }
 
 export default function ImpactStats({ collections, collectors, highlightKg }) {
@@ -95,50 +97,51 @@ export default function ImpactStats({ collections, collectors, highlightKg }) {
     return { totalKg, totalCollectors, totalPoints, progress, totalTarget }
   }, [collections, collectors])
 
+  const cards = [
+    {
+      icon: '🏔️',
+      label: 'Plastic Collected',
+      value: <AnimatedKg target={stats.totalKg} />,
+      sub: 'from Lake Kivu shores',
+      color: '#0A7C6E',
+      highlight: highlightKg,
+    },
+    {
+      icon: '👥',
+      label: 'Active Collectors',
+      value: stats.totalCollectors,
+      sub: 'across 3 districts',
+      color: '#1A4B7A',
+    },
+    {
+      icon: '⭐',
+      label: 'Points Awarded',
+      value: stats.totalPoints.toLocaleString(),
+      sub: 'community incentives',
+      color: '#F59E0B',
+    },
+    {
+      icon: '🎯',
+      label: 'Target Progress',
+      value: `${stats.progress}%`,
+      sub: `of ${formatKg(stats.totalTarget)} goal`,
+      color: '#10B981',
+    },
+    {
+      icon: '🔗',
+      label: 'Ecosystem Partners',
+      value: STAKEHOLDERS.length,
+      sub: 'collectors · recyclers · compost',
+      color: '#48CAE4',
+      href: '/ecosystem',
+    },
+  ]
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
-      <StatCard
-        icon="🏔️"
-        label="Plastic Collected"
-        value={<AnimatedKg target={stats.totalKg} />}
-        sub="from Lake Kivu shores"
-        color="#0A7C6E"
-        delay="0s"
-        highlight={highlightKg}
-      />
-      <StatCard
-        icon="👥"
-        label="Active Collectors"
-        value={stats.totalCollectors}
-        sub="across 3 districts"
-        color="#1A4B7A"
-        delay="0.1s"
-      />
-      <StatCard
-        icon="⭐"
-        label="Points Awarded"
-        value={stats.totalPoints.toLocaleString()}
-        sub="community incentives"
-        color="#F59E0B"
-        delay="0.2s"
-      />
-      <StatCard
-        icon="🎯"
-        label="Target Progress"
-        value={`${stats.progress}%`}
-        sub={`of ${formatKg(stats.totalTarget)} goal`}
-        color="#10B981"
-        delay="0.3s"
-      />
-      <StatCard
-        icon="🔗"
-        label="Ecosystem Partners"
-        value={STAKEHOLDERS.length}
-        sub="collectors · recyclers · compost"
-        color="#48CAE4"
-        delay="0.4s"
-        href="/ecosystem"
-      />
+      {cards.map((card, i) => (
+        <StatCard key={card.label} {...card} index={i} />
+      ))}
     </div>
   )
 }
