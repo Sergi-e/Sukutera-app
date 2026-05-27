@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 const NAV_LINKS = [
@@ -11,12 +11,28 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
   const [open, setOpen] = useState(false)
+  const lastScrollY = useRef(0)
   const location = useLocation()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll)
+    const onScroll = () => {
+      const y = window.scrollY
+      setScrolled(y > 40)
+
+      if (y < 80) {
+        setHidden(false)
+      } else if (y > lastScrollY.current) {
+        setHidden(true)
+      } else {
+        setHidden(false)
+      }
+
+      lastScrollY.current = y
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
@@ -24,7 +40,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`navbar-smart fixed top-0 left-0 right-0 z-50 ${hidden ? 'navbar-smart--hidden' : ''} ${
         scrolled ? 'py-3' : 'py-5'
       }`}
       style={{
@@ -36,7 +52,6 @@ export default function Navbar() {
       }}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        {/* Logo */}
         <Link to="/" className="flex items-center gap-3 group">
           <div
             className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-white text-sm"
@@ -52,7 +67,6 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map(({ path, label }) => {
             const active = location.pathname === path
@@ -78,20 +92,16 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* CTA */}
         <div className="hidden md:flex items-center gap-3">
           <Link
             to="/log"
             className="animate-pulse-glow px-5 py-2.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 hover:scale-105"
-            style={{
-              background: 'linear-gradient(135deg, #0A7C6E, #0d9e8e)',
-            }}
+            style={{ background: 'linear-gradient(135deg, #0A7C6E, #0d9e8e)' }}
           >
             + Log Collection
           </Link>
         </div>
 
-        {/* Hamburger */}
         <button
           className="md:hidden flex flex-col gap-1.5 p-2"
           onClick={() => setOpen(!open)}
@@ -121,7 +131,6 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile menu */}
       {open && (
         <div
           className="md:hidden mt-2 mx-4 rounded-2xl p-4 flex flex-col gap-1"
