@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import AnimateInView from '../ui/AnimateInView'
 import CollectorCard from './CollectorCard'
 
 export default function Leaderboard({ collectors, compact = false, limit }) {
@@ -15,7 +16,9 @@ export default function Leaderboard({ collectors, compact = false, limit }) {
         <h3 className="text-base font-semibold text-white mb-3">Top Collectors</h3>
         <div className="flex flex-col gap-0.5">
           {filtered.map((c, i) => (
-            <CollectorCard key={c.id} collector={c} rank={i + 1} compact />
+            <AnimateInView key={c.id} variant="fade-up" delay={i * 100}>
+              <CollectorCard collector={c} rank={i + 1} compact />
+            </AnimateInView>
           ))}
         </div>
       </div>
@@ -24,7 +27,6 @@ export default function Leaderboard({ collectors, compact = false, limit }) {
 
   return (
     <div>
-      {/* District filter */}
       <div className="flex gap-2 mb-6">
         {['All', 'Rubavu', 'Karongi', 'Rusizi'].map((d) => (
           <button
@@ -44,7 +46,9 @@ export default function Leaderboard({ collectors, compact = false, limit }) {
 
       <div className="flex flex-col gap-3">
         {filtered.map((c, i) => (
-          <CollectorCard key={c.id} collector={c} rank={i + 1} />
+          <AnimateInView key={c.id} variant="fade-up" delay={i * 100}>
+            <CollectorCard collector={c} rank={i + 1} />
+          </AnimateInView>
         ))}
         {filtered.length === 0 && (
           <div className="glass-card p-8 text-center" style={{ color: 'rgba(255,255,255,0.4)' }}>
