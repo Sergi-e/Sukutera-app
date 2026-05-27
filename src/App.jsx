@@ -10,6 +10,7 @@ import LeaderboardPage from './pages/LeaderboardPage'
 import EcosystemPage from './pages/EcosystemPage'
 import ImpactDashboard from './pages/ImpactDashboard'
 import NotFound from './pages/NotFound'
+import PageTransition from './components/layout/PageTransition'
 
 function AppLayout() {
   const location = useLocation()
@@ -19,15 +20,17 @@ function AppLayout() {
     <div className="flex flex-col min-h-screen" style={{ background: '#0B1F2E' }}>
       <Navbar />
       <main className={isMapPage ? 'flex-1 flex flex-col' : 'flex-1'}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/map" element={<MapView />} />
-          <Route path="/log" element={<LogCollection />} />
-          <Route path="/leaderboard" element={<LeaderboardPage />} />
-          <Route path="/ecosystem" element={<EcosystemPage />} />
-          <Route path="/impact" element={<ImpactDashboard />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <PageTransition>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/map" element={<MapView />} />
+            <Route path="/log" element={<LogCollection />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/ecosystem" element={<EcosystemPage />} />
+            <Route path="/impact" element={<ImpactDashboard />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </PageTransition>
       </main>
       {!isMapPage && <Footer />}
     </div>
