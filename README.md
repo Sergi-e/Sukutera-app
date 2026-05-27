@@ -14,7 +14,7 @@ Funded by [National Geographic Society](https://www.nationalgeographic.org/) and
 | Frontend | React 19 + Vite 6 |
 | Styling | Tailwind CSS v4 |
 | Backend | Supabase (PostgreSQL + Realtime) |
-| Maps | Mapbox GL JS |
+| Maps | Leaflet + OpenStreetMap |
 | Charts | Recharts |
 | Routing | React Router v6 |
 
@@ -31,7 +31,7 @@ npm install
 ```bash
 cp .env.example .env
 ```
-Fill in your Supabase URL, anon key, and Mapbox token in `.env`.
+Fill in your Supabase URL and anon key in `.env`.
 
 ### 3. Set up Supabase database
 - Open your [Supabase project](https://supabase.com)
@@ -51,7 +51,7 @@ App runs at **http://localhost:5173**
 | Route | Description |
 |-------|-------------|
 | `/` | Hero landing page with live impact counters |
-| `/map` | Mapbox live collection map — color-coded by plastic type |
+| `/map` | Live collection map — color-coded by plastic type (no API key required) |
 | `/log` | GPS-tagged collection logging form |
 | `/leaderboard` | Collector rankings with podium + district filter |
 | `/impact` | Full conservation dashboard — charts, progress bars |
