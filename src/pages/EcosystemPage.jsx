@@ -1,15 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import AnimateInView from '../components/ui/AnimateInView'
 import StakeholderCard from '../components/stakeholders/StakeholderCard'
+import ValueChainFlow from '../components/ecosystem/ValueChainFlow'
 import { STAKEHOLDER_CATEGORIES, STAKEHOLDERS, getCollectionPartner } from '../lib/stakeholders'
-
-const VALUE_CHAIN = [
-  { label: 'Collect', sub: 'Baj Ltd · Lake Kivu', color: STAKEHOLDER_CATEGORIES.collection.color },
-  { label: 'Log & Sort', sub: 'Sukutera Platform', color: '#0A7C6E' },
-  { label: 'Recycle', sub: 'Ecoplastic · Polytank · CIPLA', color: STAKEHOLDER_CATEGORIES.recycling.color },
-  { label: 'Compost', sub: 'RAB · Green Future · Kigali Farms', color: STAKEHOLDER_CATEGORIES.compost.color },
-  { label: 'Prove Impact', sub: 'Dashboard & funders', color: '#F5E6C8' },
-]
 
 const FILTERS = [
   { id: 'all', label: 'All Partners' },
@@ -57,41 +51,44 @@ export default function EcosystemPage() {
       }}
     >
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '6px 16px',
-              borderRadius: 999,
-              fontSize: 12,
-              fontWeight: 600,
-              marginBottom: 16,
-              background: 'rgba(10,124,110,0.12)',
-              border: '1px solid rgba(10,124,110,0.25)',
-              color: '#0A7C6E',
-            }}
-          >
-            🔗 Partner Directory
+        <AnimateInView variant="fade-left">
+          <div style={{ textAlign: 'center', marginBottom: 28 }}>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '6px 16px',
+                borderRadius: 999,
+                fontSize: 12,
+                fontWeight: 600,
+                marginBottom: 16,
+                background: 'rgba(10,124,110,0.12)',
+                border: '1px solid rgba(10,124,110,0.25)',
+                color: '#0A7C6E',
+              }}
+            >
+              🔗 Partner Directory
+            </div>
+            <h1 style={{ fontSize: 40, fontWeight: 900, color: '#fff', marginBottom: 10 }}>
+              Ecosystem
+            </h1>
+            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15, maxWidth: 560, margin: '0 auto', lineHeight: 1.65 }}>
+              The full value chain connecting Lake Kivu collectors to verified recyclers and organic processors across Rwanda.
+            </p>
           </div>
-          <h1 style={{ fontSize: 40, fontWeight: 900, color: '#fff', marginBottom: 10 }}>
-            Ecosystem
-          </h1>
-          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15, maxWidth: 560, margin: '0 auto', lineHeight: 1.65 }}>
-            The full value chain connecting Lake Kivu collectors to verified recyclers and organic processors across Rwanda.
-          </p>
-        </div>
+        </AnimateInView>
 
-        {/* Featured pilot partner */}
         {featured && (
-          <div style={{ marginBottom: 28 }}>
-            <StakeholderCard stakeholder={featured} categoryColor={STAKEHOLDER_CATEGORIES.collection.color} />
-          </div>
+          <AnimateInView variant="fade-up">
+            <div style={{ marginBottom: 28 }}>
+              <StakeholderCard stakeholder={featured} categoryColor={STAKEHOLDER_CATEGORIES.collection.color} />
+            </div>
+          </AnimateInView>
         )}
 
-        {/* Summary stats */}
+        <ValueChainFlow />
+
         <div
           style={{
             display: 'grid',
@@ -100,28 +97,32 @@ export default function EcosystemPage() {
             marginBottom: 24,
           }}
         >
-          <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '14px 16px', textAlign: 'center' }}>
-            <div style={{ fontSize: 24, fontWeight: 900, color: '#52B788' }}>{STAKEHOLDERS.length}</div>
-            <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'rgba(255,255,255,0.38)', marginTop: 4 }}>Total Partners</div>
-          </div>
-          {categories.map((cat) => (
-            <div
-              key={cat.id}
-              style={{
-                background: `${cat.color}08`,
-                border: `1px solid ${cat.color}25`,
-                borderRadius: 12,
-                padding: '14px 16px',
-                textAlign: 'center',
-              }}
-            >
-              <div style={{ fontSize: 24, fontWeight: 900, color: cat.color }}>
-                {STAKEHOLDERS.filter((s) => s.category === cat.id).length}
-              </div>
-              <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'rgba(255,255,255,0.38)', marginTop: 4 }}>
-                {cat.label.split(' ')[0]}
-              </div>
+          <AnimateInView variant="fade-up" delay={0}>
+            <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '14px 16px', textAlign: 'center', height: '100%' }}>
+              <div style={{ fontSize: 24, fontWeight: 900, color: '#52B788' }}>{STAKEHOLDERS.length}</div>
+              <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'rgba(255,255,255,0.38)', marginTop: 4 }}>Total Partners</div>
             </div>
+          </AnimateInView>
+          {categories.map((cat, i) => (
+            <AnimateInView key={cat.id} variant="fade-up" delay={(i + 1) * 100}>
+              <div
+                style={{
+                  background: `${cat.color}08`,
+                  border: `1px solid ${cat.color}25`,
+                  borderRadius: 12,
+                  padding: '14px 16px',
+                  textAlign: 'center',
+                  height: '100%',
+                }}
+              >
+                <div style={{ fontSize: 24, fontWeight: 900, color: cat.color }}>
+                  {STAKEHOLDERS.filter((s) => s.category === cat.id).length}
+                </div>
+                <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'rgba(255,255,255,0.38)', marginTop: 4 }}>
+                  {cat.label.split(' ')[0]}
+                </div>
+              </div>
+            </AnimateInView>
           ))}
         </div>
 
@@ -170,43 +171,6 @@ export default function EcosystemPage() {
           />
         </div>
 
-        {/* Value chain banner */}
-        <div
-          style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: 16,
-            padding: '20px 24px',
-            marginBottom: 40,
-            overflowX: 'auto',
-          }}
-        >
-          <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.35)', marginBottom: 14 }}>
-            Sukutera value chain
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 640, flexWrap: 'nowrap' }}>
-            {VALUE_CHAIN.map((step, i) => (
-              <div key={step.label} style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-                <div
-                  style={{
-                    padding: '10px 14px',
-                    borderRadius: 10,
-                    background: `${step.color}12`,
-                    border: `1px solid ${step.color}30`,
-                    minWidth: 110,
-                  }}
-                >
-                  <div style={{ fontSize: 13, fontWeight: 700, color: step.color }}>{step.label}</div>
-                  <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 3 }}>{step.sub}</div>
-                </div>
-                {i < VALUE_CHAIN.length - 1 && (
-                  <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 18 }}>→</span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Category sections */}
         {!hasResults && (
           <div
@@ -226,16 +190,17 @@ export default function EcosystemPage() {
           if (!items.length) return null
           return (
             <section key={category.id} id={`category-${category.id}`} style={{ marginBottom: 44 }}>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  marginBottom: 18,
-                  paddingBottom: 12,
-                  borderBottom: `1px solid ${category.color}25`,
-                }}
-              >
+              <AnimateInView variant="fade-left">
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    marginBottom: 18,
+                    paddingBottom: 12,
+                    borderBottom: `1px solid ${category.color}25`,
+                  }}
+                >
                 <div
                   style={{
                     width: 40,
@@ -274,6 +239,7 @@ export default function EcosystemPage() {
                   {items.length} partner{items.length !== 1 ? 's' : ''}
                 </div>
               </div>
+              </AnimateInView>
 
               <div
                 style={{
@@ -282,12 +248,13 @@ export default function EcosystemPage() {
                   gap: 16,
                 }}
               >
-                {items.map((stakeholder) => (
-                  <StakeholderCard
-                    key={stakeholder.id}
-                    stakeholder={stakeholder}
-                    categoryColor={category.color}
-                  />
+                {items.map((stakeholder, i) => (
+                  <AnimateInView key={stakeholder.id} variant="fade-up" delay={i * 100}>
+                    <StakeholderCard
+                      stakeholder={stakeholder}
+                      categoryColor={category.color}
+                    />
+                  </AnimateInView>
                 ))}
               </div>
             </section>
