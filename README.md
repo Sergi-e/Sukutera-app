@@ -51,10 +51,9 @@ App runs at **http://localhost:5173**
 | Route | Description |
 |-------|-------------|
 | `/` | Hero landing page with live impact counters |
-| `/map` | Live collection map (OpenStreetMap) — color-coded by plastic type |
+| `/map` | Live collection map — color-coded by plastic type (no API key required) |
 | `/log` | GPS-tagged collection logging form |
 | `/leaderboard` | Collector rankings with podium + district filter |
-| `/ecosystem` | Partner directory — collectors, recyclers, compost processors |
 | `/impact` | Full conservation dashboard — charts, progress bars |
 
 ---
@@ -89,10 +88,9 @@ src/
 │   ├── map/          LiveMap, CollectionPin
 │   ├── dashboard/    ImpactStats, PlasticBreakdown, TimelineChart
 │   ├── collectors/   Leaderboard, CollectorCard
-│   ├── stakeholders/ StakeholderCard, OffTakerGuide
 │   └── forms/        LogCollectionForm
-├── pages/            Home, MapView, LogCollection, LeaderboardPage, EcosystemPage, ImpactDashboard
-├── lib/              supabase.js, constants.js, stakeholders.js
+├── pages/            Home, MapView, LogCollection, LeaderboardPage, ImpactDashboard
+├── lib/              supabase.js, constants.js
 ├── hooks/            useCollections.js, useCollectors.js
 └── utils/            points.js, formatters.js
 supabase/
@@ -105,7 +103,7 @@ supabase/
 
 ```bash
 npm run build
-# Connect the repo to a Vercel project
+# Then connect the sukutera/ folder to a Vercel project
 # Add environment variables in Vercel dashboard
 ```
 
