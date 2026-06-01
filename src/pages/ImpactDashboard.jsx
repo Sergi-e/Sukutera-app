@@ -5,7 +5,9 @@ import { useCollectors } from '../hooks/useCollectors'
 import ImpactStats from '../components/dashboard/ImpactStats'
 import PlasticBreakdown from '../components/dashboard/PlasticBreakdown'
 import TimelineChart from '../components/dashboard/TimelineChart'
+import EnvironmentalEquivalents from '../components/dashboard/EnvironmentalEquivalents'
 import Leaderboard from '../components/collectors/Leaderboard'
+import AnimateInView from '../components/ui/AnimateInView'
 import { DISTRICT_TARGETS, PLASTIC_TYPES, DISTRICTS } from '../lib/constants'
 import { STAKEHOLDER_CATEGORIES, STAKEHOLDERS } from '../lib/stakeholders'
 import { formatKg, percentOf } from '../utils/formatters'
@@ -178,6 +180,7 @@ export default function ImpactDashboard() {
   }
 
   const allCollections = [...collections, ...demoCollections]
+  const totalKg = allCollections.reduce((s, c) => s + (c.weight_kg || 0), 0)
 
   const districtStats = Object.entries(DISTRICT_TARGETS).map(([name, target]) => {
     const kg = allCollections
@@ -192,88 +195,88 @@ export default function ImpactDashboard() {
     <div style={{ minHeight: '100vh', paddingTop: 88, paddingBottom: 64, paddingLeft: 24, paddingRight: 24, boxSizing: 'border-box' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
 
-        {/* ─── Header ─── */}
-        <div style={{ marginBottom: 32 }}>
-          <div
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              padding: '5px 14px', borderRadius: 999, marginBottom: 14,
-              background: 'rgba(10,124,110,0.12)', border: '1px solid rgba(10,124,110,0.25)',
-              color: '#0A7C6E', fontSize: 12, fontWeight: 600,
-            }}
-          >
-            📊 Impact Dashboard
-          </div>
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
-            <div>
-              <h1 style={{ fontSize: 36, fontWeight: 900, color: '#FFFFFF', margin: 0, lineHeight: 1.1 }}>
-                Conservation Impact
-              </h1>
-              <p style={{ color: 'rgba(255,255,255,0.5)', marginTop: 6, fontSize: 14 }}>
-                Real-time tracking across Lake Kivu's three collection districts
-              </p>
+        <AnimateInView variant="fade-left">
+          <div style={{ marginBottom: 32 }}>
+            <div
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                padding: '5px 14px', borderRadius: 999, marginBottom: 14,
+                background: 'rgba(10,124,110,0.12)', border: '1px solid rgba(10,124,110,0.25)',
+                color: '#0A7C6E', fontSize: 12, fontWeight: 600,
+              }}
+            >
+              📊 Impact Dashboard
             </div>
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+              <div>
+                <h1 style={{ fontSize: 36, fontWeight: 900, color: '#FFFFFF', margin: 0, lineHeight: 1.1 }}>
+                  Conservation Impact
+                </h1>
+                <p style={{ color: 'rgba(255,255,255,0.5)', marginTop: 6, fontSize: 14 }}>
+                  Real-time tracking across Lake Kivu's three collection districts
+                </p>
+              </div>
 
-            {/* ─── Demo button cluster ─── */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              {demoComplete ? (
-                <>
-                  <div
-                    style={{
-                      padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 700,
-                      background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)',
-                      color: '#10B981',
-                    }}
-                  >
-                    ✓ Demo Complete — {demoCount} collections added
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                {demoComplete ? (
+                  <>
+                    <div
+                      style={{
+                        padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 700,
+                        background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)',
+                        color: '#10B981',
+                      }}
+                    >
+                      ✓ Demo Complete — {demoCount} collections added
+                    </div>
+                    <button
+                      onClick={resetDemo}
+                      style={{
+                        padding: '9px 18px', borderRadius: 10, fontSize: 13, fontWeight: 700,
+                        background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
+                        color: 'rgba(255,255,255,0.7)', cursor: 'pointer',
+                      }}
+                    >
+                      ↺ Reset Demo
+                    </button>
+                  </>
+                ) : demoRunning ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      {Array.from({ length: DEMO_MAX }).map((_, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            width: 8, height: 8, borderRadius: '50%',
+                            background: i < demoCount ? '#0A7C6E' : 'rgba(255,255,255,0.12)',
+                            transition: 'background 0.3s ease',
+                          }}
+                        />
+                      ))}
+                    </div>
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
+                      {demoCount}/{DEMO_MAX} logged…
+                    </div>
                   </div>
+                ) : (
                   <button
-                    onClick={resetDemo}
+                    onClick={startDemo}
                     style={{
-                      padding: '9px 18px', borderRadius: 10, fontSize: 13, fontWeight: 700,
-                      background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-                      color: 'rgba(255,255,255,0.7)', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', gap: 8,
+                      padding: '10px 22px', borderRadius: 12, fontSize: 14, fontWeight: 700,
+                      background: 'linear-gradient(135deg, #0A7C6E, #0d9e8e)',
+                      color: '#FFFFFF', border: 'none', cursor: 'pointer',
+                      animation: 'pulse-glow 2.5s ease-in-out infinite',
+                      boxShadow: '0 0 20px rgba(10,124,110,0.4)',
                     }}
                   >
-                    ↺ Reset Demo
+                    ▶ Run Live Demo
                   </button>
-                </>
-              ) : demoRunning ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    {Array.from({ length: DEMO_MAX }).map((_, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          width: 8, height: 8, borderRadius: '50%',
-                          background: i < demoCount ? '#0A7C6E' : 'rgba(255,255,255,0.12)',
-                          transition: 'background 0.3s ease',
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
-                    {demoCount}/{DEMO_MAX} logged…
-                  </div>
-                </div>
-              ) : (
-                <button
-                  onClick={startDemo}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    padding: '10px 22px', borderRadius: 12, fontSize: 14, fontWeight: 700,
-                    background: 'linear-gradient(135deg, #0A7C6E, #0d9e8e)',
-                    color: '#FFFFFF', border: 'none', cursor: 'pointer',
-                    animation: 'pulse-glow 2.5s ease-in-out infinite',
-                    boxShadow: '0 0 20px rgba(10,124,110,0.4)',
-                  }}
-                >
-                  ▶ Run Live Demo
-                </button>
-              )}
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        </AnimateInView>
 
         {/* ─── Stat cards ─── */}
         <div style={{ marginBottom: 32 }}>
@@ -348,6 +351,8 @@ export default function ImpactDashboard() {
             })}
           </div>
         </div>
+
+        <EnvironmentalEquivalents totalKg={totalKg} />
 
         {/* ─── Partner ecosystem strip ─── */}
         <div
