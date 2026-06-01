@@ -1,86 +1,66 @@
-import { useEffect, useMemo } from 'react'
-import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet'
-import 'leaflet/dist/leaflet.css'
+import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet'
 import { LAKE_KIVU_CENTER, PLASTIC_TYPES } from '../../lib/constants'
 import { formatKg } from '../../utils/formatters'
 
-const CENTER = [LAKE_KIVU_CENTER.lat, LAKE_KIVU_CENTER.lng]
-const START_ZOOM = 8
-const END_ZOOM = 11
-
-function markerColor(plasticType) {
-  return PLASTIC_TYPES[plasticType]?.color || PLASTIC_TYPES.Other.color
+function getMarkerColor(plasticType) {
+  return PLASTIC_TYPES[plasticType]?.color ?? '#6B7280'
 }
 
-function FlyToLakeKivu() {
-  const map = useMap()
-
-  useEffect(() => {
-    map.flyTo(CENTER, END_ZOOM, { duration: 2.6 })
-  }, [map])
-
-  return null
+function getLocationName(collection) {
+  return collection.notes || collection.district || 'Lake Kivu'
 }
 
-function CollectionPopup({ collection, collectorName }) {
-  const color = markerColor(collection.plastic_type)
-
+export default function LiveMap({ collections = [], className = '' }) {
   return (
-    <div className="live-map-popup">
-      <div className="live-map-popup__header">
-        <span className="live-map-popup__dot" style={{ background: color }} />
-        <span className="live-map-popup__type">{collection.plastic_type}</span>
-      </div>
-      <p className="live-map-popup__name">{collectorName}</p>
-      <p className="live-map-popup__weight">{formatKg(collection.weight_kg)}</p>
-      <p className="live-map-popup__district">{collection.district || 'Lake Kivu'}</p>
-    </div>
-  )
-}
-
-export default function LiveMap({ collections = [], collectors = [], className = '' }) {
-  const collectorMap = useMemo(
-    () =>
-      collectors.reduce((map, collector) => {
-        map[collector.id] = collector.name
-        return map
-      }, {}),
-    [collectors],
-  )
-
-  const points = useMemo(
-    () => collections.filter((c) => c.latitude && c.longitude),
-    [collections],
-  )
-
-  return (
-    <div className={`live-map-wrap ${className}`.trim()}>
-      <MapContainer center={CENTER} zoom={START_ZOOM} scrollWheelZoom className="live-map-container">
+    <div
+      className={`sukutera-map ${className}`.trim()}
+      style={{ height: '75vh', width: '100%' }}
+    >
+      <MapContainer
+        center={[LAKE_KIVU_CENTER.lat, LAKE_KIVU_CENTER.lng]}
+        zoom={11}
+        style={{ height: '100%', width: '100%' }}
+        scrollWheelZoom
+      >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <FlyToLakeKivu />
-        {points.map((collection, index) => {
-          const color = markerColor(collection.plastic_type)
+
+        {collections.map((c, index) => {
+          if (c.latitude == null || c.longitude == null) return null
+
+          const color = getMarkerColor(c.plastic_type)
+          const locationName = getLocationName(c)
 
           return (
             <CircleMarker
-              key={collection.id ?? `${collection.latitude}-${collection.longitude}-${index}`}
-              center={[collection.latitude, collection.longitude]}
+              key={c.id ?? `${c.latitude}-${c.longitude}-${index}`}
+              center={[c.latitude, c.longitude]}
               radius={10}
               pathOptions={{
-                color,
-                fillColor: color,
-                fillOpacity: 0.85,
+                color: '#ffffff',
                 weight: 2,
+                fillColor: color,
+                fillOpacity: 0.8,
               }}
             >
               <Popup>
-                <CollectionPopup
-                  collection={collection}
-                  collectorName={collectorMap[collection.collector_id] || 'Unknown Collector'}
-                />
+                <div className="sukutera-popup">
+                  <div className="sukutera-popup__title">{locationName}</div>
+                  <div className="sukutera-popup__row">
+                    <span>Weight</span>
+                    <strong>{formatKg(c.weight_kg)}</strong>
+                  </div>
+                  <div className="sukutera-popup__row">
+                    <span>Type</span>
+                    <strong style={{ color }}>{c.plastic_type}</strong>
+                  </div>
+                  <div className="sukutera-popup__row">
+                    <span>District</span>
+                    <strong>{c.district || 'Lake Kivu'}</strong>
+                  </div>
+                </div>
               </Popup>
             </CircleMarker>
           )
