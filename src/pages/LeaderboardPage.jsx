@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useCollectors } from '../hooks/useCollectors'
+import AnimateInView from '../components/ui/AnimateInView'
 import Leaderboard from '../components/collectors/Leaderboard'
 import { formatKg } from '../utils/formatters'
 
@@ -12,19 +13,20 @@ export default function LeaderboardPage() {
   return (
     <div style={{ minHeight: '100vh', paddingTop: 88, paddingBottom: 64, paddingLeft: 24, paddingRight: 24, boxSizing: 'border-box' }}>
       <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-4"
-            style={{ background: 'rgba(245,230,200,0.08)', border: '1px solid rgba(245,230,200,0.15)', color: '#F5E6C8' }}
-          >
-            🏆 Community Leaderboard
+        <AnimateInView variant="fade-left">
+          <div className="text-center mb-10">
+            <div
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-4"
+              style={{ background: 'rgba(245,230,200,0.08)', border: '1px solid rgba(245,230,200,0.15)', color: '#F5E6C8' }}
+            >
+              🏆 Community Leaderboard
+            </div>
+            <h1 className="text-4xl font-black text-white mb-3">Top Collectors</h1>
+            <p style={{ color: 'rgba(255,255,255,0.5)' }}>
+              {collectors.length} collectors · {formatKg(totalKg)} total recovered
+            </p>
           </div>
-          <h1 className="text-4xl font-black text-white mb-3">Top Collectors</h1>
-          <p style={{ color: 'rgba(255,255,255,0.5)' }}>
-            {collectors.length} collectors · {formatKg(totalKg)} total recovered
-          </p>
-        </div>
+        </AnimateInView>
 
         {/* Podium — top 3 */}
         {sorted.length >= 3 && (
