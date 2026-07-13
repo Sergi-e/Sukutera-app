@@ -434,10 +434,10 @@ export default function ImpactDashboard() {
               minWidth: 0,
             }}
           >
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#FFFFFF', marginBottom: 16 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#FFFFFF', marginBottom: 16, marginTop: 0 }}>
               Recent Collections
             </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {allCollections.slice(0, 8).map((c, i) => {
                 const typeColor = PLASTIC_TYPES[c.plastic_type]?.color || '#6B7280'
                 const pts = (PLASTIC_TYPES[c.plastic_type]?.points || 3) * Math.round(c.weight_kg)
@@ -446,26 +446,30 @@ export default function ImpactDashboard() {
                   <div
                     key={i}
                     style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      padding: '10px 14px', borderRadius: 10,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 16,
+                      padding: '12px 18px',
+                      borderRadius: 10,
                       background: isDemo ? 'rgba(10,124,110,0.08)' : 'rgba(255,255,255,0.03)',
                       border: isDemo ? '1px solid rgba(10,124,110,0.25)' : '1px solid rgba(255,255,255,0.05)',
                       transition: 'all 0.3s ease',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
                       <div style={{ width: 8, height: 8, borderRadius: '50%', background: typeColor, boxShadow: `0 0 6px ${typeColor}`, flexShrink: 0 }} />
-                      <div>
+                      <div style={{ minWidth: 0 }}>
                         <div style={{ fontSize: 13, fontWeight: 600, color: '#FFFFFF' }}>
                           {c.district || 'Lake Kivu'}
-                          {isDemo && <span style={{ marginLeft: 6, fontSize: 10, color: '#0A7C6E', fontWeight: 700 }}>DEMO</span>}
+                          {isDemo && <span style={{ marginLeft: 6, fontSize: 10, color: '#34D399', fontWeight: 700 }}>DEMO</span>}
                         </div>
-                        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{c.notes || c.plastic_type}</div>
+                        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{c.notes || c.plastic_type}</div>
                       </div>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
+                    <div style={{ textAlign: 'right', flexShrink: 0, paddingLeft: 8 }}>
                       <div style={{ fontSize: 13, fontWeight: 700, color: '#F5E6C8' }}>{formatKg(c.weight_kg)}</div>
-                      <div style={{ fontSize: 11, color: typeColor }}>+{pts} pts</div>
+                      <div style={{ fontSize: 11, color: typeColor, marginTop: 2 }}>+{pts} pts</div>
                     </div>
                   </div>
                 )

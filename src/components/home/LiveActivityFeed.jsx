@@ -29,7 +29,7 @@ export default function LiveActivityFeed({ collections, collectors }) {
           </div>
         </AnimateInView>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {recent.map((item, i) => {
             const color = PLASTIC_TYPES[item.plastic_type]?.color || '#6B7280'
             return (
@@ -40,7 +40,7 @@ export default function LiveActivityFeed({ collections, collectors }) {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     gap: 16,
-                    padding: '16px 20px',
+                    padding: '18px 22px',
                     borderRadius: 14,
                     background: 'rgba(15,42,61,0.7)',
                     border: '1px solid rgba(255,255,255,0.07)',

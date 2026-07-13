@@ -40,7 +40,7 @@ export default function EnvironmentalEquivalents({ totalKg }) {
         <h3 style={{ fontSize: 16, fontWeight: 700, color: '#FFFFFF', marginBottom: 6 }}>
           Environmental Equivalents
         </h3>
-        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', marginBottom: 20 }}>
+        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginBottom: 24, marginTop: 0, lineHeight: 1.5 }}>
           What {formatKg(totalKg)} of plastic diverted means for Lake Kivu
         </p>
       </AnimateInView>

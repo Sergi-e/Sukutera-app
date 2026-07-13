@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
+@source "../src/**/*.{js,jsx,ts,tsx,html}";
 @import 'leaflet/dist/leaflet.css';
 
 :root {
@@ -31,12 +32,169 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 #root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Native selects — closed state matches dark theme; open list stays readable */
+select,
+.form-select {
+  color: #ffffff;
+  background-color: var(--color-surface);
+}
+
+select option,
+.form-select option {
+  color: #0b1f2e;
+  background-color: #ffffff;
+}
+
+select:disabled,
+.form-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ─── Layout & spacing (reliable without Tailwind utilities) ─────────── */
+
+.navbar-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.navbar-brand-sub {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.3;
+  color: rgba(245, 230, 200, 0.75);
+}
+
+.navbar-links {
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+
+.navbar-cta-wrap {
+  display: none;
+  align-items: center;
+}
+
+.navbar-mobile-toggle {
+  display: flex;
+}
+
+.navbar-mobile-menu {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .navbar-links,
+  .navbar-cta-wrap {
+    display: flex;
+  }
+
+  .navbar-mobile-toggle,
+  .navbar-mobile-menu {
+    display: none;
+  }
+}
+
+.nav-link {
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-cta-btn {
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #0A7C6E, #0d9e8e);
+}
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.form-field-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.podium-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: flex-end;
+  margin-bottom: 40px;
+}
+
+.podium-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.podium-bar {
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 12px;
+}
+
+.leaderboard-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.panel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: 12px;
+}
+
+.points-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.points-grid-item {
+  padding: 14px;
+  border-radius: 12px;
 }
 
 /* Smart navbar — hide on scroll down, show on scroll up */
@@ -104,7 +262,7 @@ body {
 
 /* Environmental equivalent cards */
 .env-equiv-card {
-  padding: 20px;
+  padding: 24px 22px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -162,7 +320,7 @@ body {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -170,8 +328,9 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-primary);
-  border-radius: 3px;
+  background: rgba(10, 124, 110, 0.35);
+  border-radius: 4px;
+  border: 2px solid var(--color-bg);
 }
 
 /* Animations */
@@ -246,6 +405,11 @@ body {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
+  padding: 24px;
+}
+
+.glass-card--spacious {
+  padding: 28px 32px;
 }
 
 /* Gradient text */
@@ -295,6 +459,8 @@ body {
 
 .impact-recent-panel {
   grid-column: span 1;
+  max-height: none;
+  overflow: visible;
 }
 
 @media (max-width: 768px) {
@@ -402,7 +568,7 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 12px 16px;
+  padding: 16px 18px;
   font-size: 12px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.9);

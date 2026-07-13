@@ -5,8 +5,6 @@ import { useCollectors } from '../hooks/useCollectors'
 import { formatKg } from '../utils/formatters'
 import { DISTRICT_TARGETS } from '../lib/constants'
 import { STAKEHOLDER_CATEGORIES, STAKEHOLDERS } from '../lib/stakeholders'
-import { FIELD_IMAGES } from '../lib/images'
-import StakeholderCard from '../components/stakeholders/StakeholderCard'
 import AnimateInView from '../components/ui/AnimateInView'
 import LiveActivityFeed from '../components/home/LiveActivityFeed'
 import WhyItMatters from '../components/home/WhyItMatters'
@@ -189,7 +187,7 @@ export default function Home() {
               fontSize: 'clamp(20px, 4vw, 32px)',
               fontWeight: 700,
               letterSpacing: '0.06em',
-              marginBottom: 20,
+              marginBottom: 28,
               background: 'linear-gradient(135deg, #0A7C6E 0%, #F5E6C8 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -388,12 +386,12 @@ export default function Home() {
                   <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, marginBottom: 18 }}>
                     {d.desc}
                   </p>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'rgba(255,255,255,0.45)', marginBottom: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 10, paddingTop: 4 }}>
                     <span>{formatKg(distKg)} collected</span>
                     <span>{pct}% of {formatKg(d.target)}</span>
                   </div>
-                  <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.07)' }}>
-                    <div style={{ height: 6, borderRadius: 3, width: `${pct}%`, background: d.color, transition: 'width 0.8s ease' }} />
+                  <div style={{ height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.07)', marginBottom: 4 }}>
+                    <div style={{ height: 8, borderRadius: 4, width: `${pct}%`, background: d.color, transition: 'width 0.8s ease' }} />
                   </div>
                   </div>
                 </AnimateInView>
@@ -465,15 +463,6 @@ export default function Home() {
             </div>
           </AnimateInView>
 
-          <div style={{ marginBottom: 32 }}>
-            <StakeholderCard
-              stakeholder={STAKEHOLDERS.find((s) => s.featured)}
-              categoryColor={STAKEHOLDER_CATEGORIES.collection.color}
-              coverImage={FIELD_IMAGES.wasteHouse}
-              coverImageKey="wasteHouse"
-            />
-          </div>
-
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 32 }}>
             {Object.values(STAKEHOLDER_CATEGORIES).map((category) => {
               const partners = STAKEHOLDERS.filter((s) => s.category === category.id)
@@ -495,9 +484,9 @@ export default function Home() {
                       <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{partners.length} partners</div>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {partners.slice(0, 3).map((p) => (
-                      <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '4px 0' }}>
                         <div
                           style={{
                             width: 32,

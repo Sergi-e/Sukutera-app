@@ -6,36 +6,67 @@ export default function CollectorCard({ collector, rank, compact = false }) {
   const initials = getInitials(collector.name)
 
   const districtColors = {
-    Rubavu: '#3B82F6',
-    Karongi: '#10B981',
-    Rusizi: '#F59E0B',
+    Rubavu: '#60A5FA',
+    Karongi: '#34D399',
+    Rusizi: '#FBBF24',
   }
-  const districtColor = districtColors[collector.district] || '#6B7280'
+  const districtColor = districtColors[collector.district] || '#9CA3AF'
 
   if (compact) {
     return (
-      <div className="flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-white/5">
-        <span
-          className="text-lg font-black w-7 text-center"
-          style={{ color: rank <= 3 ? '#F5E6C8' : 'rgba(255,255,255,0.3)' }}
-        >
-          {rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : rank}
-        </span>
-        <div
-          className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-          style={{ background: `linear-gradient(135deg, ${rankInfo.color}80, ${rankInfo.color}40)`, border: `1.5px solid ${rankInfo.color}60` }}
-        >
-          {initials}
+      <div
+        className="panel-row"
+        style={{
+          background: 'transparent',
+          borderRadius: 12,
+          transition: 'background 0.2s ease',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
+          <span
+            style={{
+              fontSize: 16,
+              fontWeight: 900,
+              width: 28,
+              textAlign: 'center',
+              flexShrink: 0,
+              color: rank <= 3 ? '#F5E6C8' : 'rgba(255,255,255,0.35)',
+            }}
+          >
+            {rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : rank}
+          </span>
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 13,
+              fontWeight: 700,
+              color: '#fff',
+              flexShrink: 0,
+              background: `linear-gradient(135deg, ${rankInfo.color}80, ${rankInfo.color}40)`,
+              border: `1.5px solid ${rankInfo.color}60`,
+            }}
+          >
+            {initials}
+          </div>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {collector.name}
+            </div>
+            <div style={{ fontSize: 12, color: districtColor, marginTop: 2 }}>{collector.district}</div>
+          </div>
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold text-white truncate">{collector.name}</div>
-          <div className="text-xs" style={{ color: districtColor }}>{collector.district}</div>
-        </div>
-        <div className="text-right">
-          <div className="text-sm font-bold" style={{ color: '#F5E6C8' }}>
+        <div style={{ textAlign: 'right', flexShrink: 0, paddingLeft: 12 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: '#F5E6C8' }}>
             {formatPoints(collector.total_points || 0)}
           </div>
-          <div className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>
             {formatKg(collector.total_kg || 0)}
           </div>
         </div>
@@ -44,56 +75,98 @@ export default function CollectorCard({ collector, rank, compact = false }) {
   }
 
   return (
-    <div className="glass-card p-5 hover:border-white/10 transition-all duration-200 hover:-translate-y-0.5">
-      <div className="flex items-start gap-4">
-        <div className="relative">
+    <div
+      className="glass-card"
+      style={{ transition: 'transform 0.2s ease, border-color 0.2s ease' }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'
+        e.currentTarget.style.transform = 'translateY(-2px)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+        e.currentTarget.style.transform = 'translateY(0)'
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+        <div style={{ position: 'relative', flexShrink: 0 }}>
           <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center text-lg font-black text-white"
-            style={{ background: `linear-gradient(135deg, ${rankInfo.color}60, ${rankInfo.color}20)`, border: `2px solid ${rankInfo.color}50` }}
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 16,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 18,
+              fontWeight: 900,
+              color: '#fff',
+              background: `linear-gradient(135deg, ${rankInfo.color}60, ${rankInfo.color}20)`,
+              border: `2px solid ${rankInfo.color}50`,
+            }}
           >
             {initials}
           </div>
           <span
-            className="absolute -top-1 -right-1 text-base"
+            style={{
+              position: 'absolute',
+              top: -4,
+              right: -4,
+              fontSize: 14,
+              lineHeight: 1,
+            }}
             title={rankInfo.label}
           >
             {rankInfo.icon}
           </span>
         </div>
 
-        <div className="flex-1">
-          <div className="flex items-start justify-between">
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
             <div>
-              <h3 className="font-semibold text-white">{collector.name}</h3>
-              <div className="flex items-center gap-2 mt-0.5">
+              <h3 style={{ fontWeight: 600, color: '#fff', margin: 0, fontSize: 16 }}>{collector.name}</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6, flexWrap: 'wrap' }}>
                 <span
-                  className="text-xs px-2 py-0.5 rounded-full font-medium"
-                  style={{ background: `${districtColor}20`, color: districtColor }}
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 600,
+                    padding: '3px 10px',
+                    borderRadius: 999,
+                    background: `${districtColor}22`,
+                    color: districtColor,
+                    border: `1px solid ${districtColor}44`,
+                  }}
                 >
                   {collector.district}
                 </span>
-                <span className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                  {rankInfo.label}
-                </span>
+                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)' }}>{rankInfo.label}</span>
               </div>
             </div>
             {rank && (
-              <span className="text-2xl font-black" style={{ color: rank <= 3 ? '#F5E6C8' : 'rgba(255,255,255,0.3)' }}>
+              <span
+                style={{
+                  fontSize: rank <= 3 ? 22 : 20,
+                  fontWeight: 900,
+                  flexShrink: 0,
+                  color: rank <= 3 ? '#F5E6C8' : 'rgba(255,255,255,0.35)',
+                }}
+              >
                 {rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : `#${rank}`}
               </span>
             )}
           </div>
 
-          <div className="flex gap-4 mt-3">
+          <div style={{ display: 'flex', gap: 28, marginTop: 16 }}>
             <div>
-              <div className="text-xl font-black" style={{ color: rankInfo.color }}>
+              <div style={{ fontSize: 22, fontWeight: 900, color: rankInfo.color, lineHeight: 1.1 }}>
                 {formatPoints(collector.total_points || 0)}
               </div>
-              <div className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>points earned</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 6 }}>points earned</div>
             </div>
             <div>
-              <div className="text-xl font-black text-white">{formatKg(collector.total_kg || 0)}</div>
-              <div className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>collected</div>
+              <div style={{ fontSize: 22, fontWeight: 900, color: '#fff', lineHeight: 1.1 }}>
+                {formatKg(collector.total_kg || 0)}
+              </div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 6 }}>collected</div>
             </div>
           </div>
         </div>

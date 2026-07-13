@@ -11,6 +11,8 @@ export function useCollectors() {
     let isMounted = true
 
     async function fetchCollectors() {
+      if (!supabase) return
+
       setLoading(true)
       try {
         const { data, error: err } = await supabase

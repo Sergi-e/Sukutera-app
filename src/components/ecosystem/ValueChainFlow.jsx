@@ -38,24 +38,24 @@ export default function ValueChainFlow() {
             alignItems: 'center',
             justifyContent: 'center',
             flexWrap: 'wrap',
-            gap: 8,
+            gap: 12,
           }}
         >
           {STEPS.map((step, i) => (
-            <div key={step.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div key={step.label} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div
                 style={{
-                  padding: '16px 18px',
+                  padding: '18px 20px',
                   borderRadius: 14,
-                  background: `${step.color}10`,
+                  background: 'rgba(255,255,255,0.04)',
                   border: `1px solid ${step.color}35`,
                   textAlign: 'center',
-                  minWidth: 130,
+                  minWidth: 140,
                 }}
               >
-                <div style={{ fontSize: 28, marginBottom: 8 }}>{step.icon}</div>
+                <div style={{ fontSize: 28, marginBottom: 10 }}>{step.icon}</div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: step.color }}>{step.label}</div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>{step.sub}</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 6, lineHeight: 1.4 }}>{step.sub}</div>
               </div>
               {i < STEPS.length - 1 && (
                 <span className="value-chain-arrow" aria-hidden="true">

@@ -12,9 +12,11 @@ export default function Leaderboard({ collectors, compact = false, limit }) {
 
   if (compact) {
     return (
-      <div className="glass-card p-4">
-        <h3 className="text-base font-semibold text-white mb-3">Top Collectors</h3>
-        <div className="flex flex-col gap-0.5">
+      <div className="glass-card">
+        <h3 style={{ fontSize: 16, fontWeight: 600, color: '#fff', marginBottom: 16, marginTop: 0 }}>
+          Top Collectors
+        </h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {filtered.map((c, i) => (
             <AnimateInView key={c.id} variant="fade-up" delay={i * 100}>
               <CollectorCard collector={c} rank={i + 1} compact />
@@ -27,13 +29,19 @@ export default function Leaderboard({ collectors, compact = false, limit }) {
 
   return (
     <div>
-      <div className="flex gap-2 mb-6">
+      <div className="leaderboard-filters">
         {['All', 'Rubavu', 'Karongi', 'Rusizi'].map((d) => (
           <button
             key={d}
+            type="button"
             onClick={() => setDistrict(d)}
-            className="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200"
             style={{
+              padding: '8px 16px',
+              borderRadius: 12,
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
               background: district === d ? 'rgba(10,124,110,0.25)' : 'rgba(255,255,255,0.05)',
               color: district === d ? '#F5E6C8' : 'rgba(255,255,255,0.6)',
               border: district === d ? '1px solid rgba(10,124,110,0.4)' : '1px solid rgba(255,255,255,0.08)',
@@ -44,14 +52,14 @@ export default function Leaderboard({ collectors, compact = false, limit }) {
         ))}
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {filtered.map((c, i) => (
           <AnimateInView key={c.id} variant="fade-up" delay={i * 100}>
             <CollectorCard collector={c} rank={i + 1} />
           </AnimateInView>
         ))}
         {filtered.length === 0 && (
-          <div className="glass-card p-8 text-center" style={{ color: 'rgba(255,255,255,0.4)' }}>
+          <div className="glass-card" style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
             No collectors in this district yet.
           </div>
         )}

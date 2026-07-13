@@ -14,18 +14,27 @@ export default function LogCollection() {
     <div style={{ minHeight: '100vh', paddingTop: 88, paddingBottom: 64, paddingLeft: 24, paddingRight: 24, boxSizing: 'border-box' }}>
       <div style={{ maxWidth: 960, margin: '0 auto' }}>
         <AnimateInView variant="fade-left">
-          <div className="mb-8">
+          <div style={{ marginBottom: 32 }}>
             <Link
               to="/"
-              className="inline-flex items-center gap-2 text-sm mb-6 transition-colors"
-              style={{ color: 'rgba(255,255,255,0.45)' }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                fontSize: 14,
+                marginBottom: 24,
+                textDecoration: 'none',
+                color: 'rgba(255,255,255,0.45)',
+              }}
               onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.8)')}
               onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.45)')}
             >
               ← Back to Home
             </Link>
-            <h1 className="text-3xl font-black text-white mb-2">Log a Collection</h1>
-            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            <h1 style={{ fontSize: 30, fontWeight: 900, color: '#fff', marginBottom: 8, marginTop: 0 }}>
+              Log a Collection
+            </h1>
+            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.55 }}>
               Record your plastic collection, earn points, and route sorted waste to the right off-taker.
             </p>
           </div>
@@ -40,7 +49,7 @@ export default function LogCollection() {
           }}
         >
           <AnimateInView variant="fade-left">
-            <div className="glass-card p-6 md:p-8">
+            <div className="glass-card glass-card--spacious">
               <LogCollectionForm
                 onSuccess={() => setSubmitted(true)}
                 onPlasticTypeChange={setPlasticType}
@@ -57,31 +66,33 @@ export default function LogCollection() {
               />
               <OffTakerGuide plasticType={plasticType} />
 
-              <div className="glass-card p-5">
-                <h3 className="text-sm font-semibold text-white mb-3">Points Guide</h3>
-                <div className="grid grid-cols-2 gap-3">
+              <div className="glass-card">
+                <h3 style={{ fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 16, marginTop: 0 }}>
+                  Points Guide
+                </h3>
+                <div className="points-grid">
                   {[
-                    { type: 'PET', pts: 10, color: '#3B82F6', desc: 'Bottles & packaging' },
-                    { type: 'HDPE', pts: 8, color: '#10B981', desc: 'Containers & pipes' },
-                    { type: 'Mixed', pts: 5, color: '#F59E0B', desc: 'Assorted plastic' },
-                    { type: 'Other', pts: 3, color: '#6B7280', desc: 'Unidentified types' },
+                    { type: 'PET', pts: 10, color: '#60A5FA', desc: 'Bottles & packaging' },
+                    { type: 'HDPE', pts: 8, color: '#34D399', desc: 'Containers & pipes' },
+                    { type: 'Mixed', pts: 5, color: '#FBBF24', desc: 'Assorted plastic' },
+                    { type: 'Other', pts: 3, color: '#9CA3AF', desc: 'Unidentified types' },
                   ].map((item) => (
                     <div
                       key={item.type}
-                      className="rounded-xl p-3"
+                      className="points-grid-item"
                       style={{
                         background: plasticType === item.type ? `${item.color}18` : `${item.color}10`,
                         border: plasticType === item.type ? `1.5px solid ${item.color}50` : `1px solid ${item.color}25`,
                       }}
                     >
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: item.color }} />
-                        <span className="font-semibold text-sm text-white">{item.type}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                        <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color }} />
+                        <span style={{ fontWeight: 600, fontSize: 14, color: '#fff' }}>{item.type}</span>
                       </div>
-                      <div className="text-lg font-black" style={{ color: item.color }}>
+                      <div style={{ fontSize: 18, fontWeight: 900, color: item.color, lineHeight: 1.2 }}>
                         {item.pts} pts/kg
                       </div>
-                      <div className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                      <div style={{ fontSize: 12, marginTop: 6, color: 'rgba(255,255,255,0.45)' }}>
                         {item.desc}
                       </div>
                     </div>

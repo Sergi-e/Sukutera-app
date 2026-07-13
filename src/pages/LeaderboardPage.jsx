@@ -40,34 +40,55 @@ export default function LeaderboardPage() {
 
         {/* Podium — top 3 */}
         {sorted.length >= 3 && (
-          <div className="grid grid-cols-3 gap-3 mb-10">
+          <div className="podium-grid">
             {[sorted[1], sorted[0], sorted[2]].map((c, pos) => {
               const actualRank = pos === 0 ? 2 : pos === 1 ? 1 : 3
-              const heights = ['h-24', 'h-32', 'h-20']
+              const barHeights = [96, 128, 80]
               const podiumColors = ['#9CA3AF', '#F5E6C8', '#CD7F32']
               const color = podiumColors[pos]
               return (
-                <div key={c?.id} className="flex flex-col items-center gap-2">
+                <div key={c?.id} className="podium-col">
                   <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center font-black text-white text-sm"
                     style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 900,
+                      color: '#fff',
+                      fontSize: 14,
                       background: `linear-gradient(135deg, ${color}60, ${color}20)`,
                       border: `2px solid ${color}50`,
                     }}
                   >
                     {c?.name?.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)}
                   </div>
-                  <div className="text-xs font-semibold text-white text-center truncate max-w-[90px]">
+                  <div
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: '#fff',
+                      textAlign: 'center',
+                      maxWidth: 100,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
                     {c?.name?.split(' ')[0]}
                   </div>
                   <div
-                    className={`w-full rounded-t-xl flex flex-col items-center justify-end pb-3 ${heights[pos]}`}
-                    style={{ background: `${color}15`, border: `1px solid ${color}30` }}
+                    className="podium-bar"
+                    style={{
+                      height: barHeights[pos],
+                      background: `${color}15`,
+                      border: `1px solid ${color}30`,
+                    }}
                   >
-                    <div className="text-xl">{['🥈', '🥇', '🥉'][pos]}</div>
-                    <div className="text-xs font-black" style={{ color }}>
-                      #{actualRank}
-                    </div>
+                    <div style={{ fontSize: 22, lineHeight: 1 }}>{['🥈', '🥇', '🥉'][pos]}</div>
+                    <div style={{ fontSize: 12, fontWeight: 900, color, marginTop: 4 }}>#{actualRank}</div>
                   </div>
                 </div>
               )

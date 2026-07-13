@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { PLASTIC_TYPES, DISTRICTS, SEED_COLLECTORS } from '../../lib/constants'
+import { PLASTIC_TYPES, DISTRICTS } from '../../lib/constants'
 import { calculatePoints } from '../../utils/points'
 import { supabase, TABLES } from '../../lib/supabase'
+import { useCollectors } from '../../hooks/useCollectors'
 
 const INITIAL = {
   collector_id: '',
@@ -14,6 +15,7 @@ const INITIAL = {
 }
 
 export default function LogCollectionForm({ onSuccess, onPlasticTypeChange }) {
+  const { collectors, loading: collectorsLoading } = useCollectors()
   const [form, setForm] = useState(INITIAL)
   const [status, setStatus] = useState(null) // 'loading' | 'success' | 'error'
   const [errorMsg, setErrorMsg] = useState('')
@@ -102,24 +104,23 @@ export default function LogCollectionForm({ onSuccess, onPlasticTypeChange }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="form-stack">
       {/* Collector */}
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: 'rgba(255,255,255,0.7)' }}>
-          Collector
-        </label>
+        <label className="form-field-label">Collector</label>
         <select
           name="collector_id"
           value={form.collector_id}
           onChange={handleChange}
-          className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none transition-all"
+          disabled={collectorsLoading}
+          className="form-select w-full rounded-xl px-4 py-3 text-sm outline-none transition-all"
           style={{
             background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.1)',
           }}
         >
           <option value="">— Select collector —</option>
-          {SEED_COLLECTORS.map((c) => (
+          {collectors.map((c) => (
             <option key={c.id} value={c.id}>{c.name} ({c.district})</option>
           ))}
         </select>
@@ -127,9 +128,7 @@ export default function LogCollectionForm({ onSuccess, onPlasticTypeChange }) {
 
       {/* Weight */}
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: 'rgba(255,255,255,0.7)' }}>
-          Weight (kg) *
-        </label>
+        <label className="form-field-label">Weight (kg) *</label>
         <input
           type="number"
           name="weight_kg"
@@ -150,11 +149,11 @@ export default function LogCollectionForm({ onSuccess, onPlasticTypeChange }) {
 
       {/* Plastic Type */}
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: 'rgba(255,255,255,0.7)' }}>
-          Plastic Type *
-        </label>
-        <div className="grid grid-cols-2 gap-2">
-          {Object.entries(PLASTIC_TYPES).map(([type, info]) => (
+        <label className="form-field-label">Plastic Type *</label>
+        <div className="points-grid">
+          {Object.entries(PLASTIC_TYPES).map(([type, info]) => {
+            const ptsColor = type === 'PET' ? '#60A5FA' : info.color
+            return (
             <button
               key={type}
               type="button"
@@ -162,35 +161,35 @@ export default function LogCollectionForm({ onSuccess, onPlasticTypeChange }) {
                 setForm((prev) => ({ ...prev, plastic_type: type }))
                 onPlasticTypeChange?.(type)
               }}
-              className="p-3 rounded-xl text-sm font-medium text-left transition-all duration-150"
+              className="points-grid-item"
               style={{
+                textAlign: 'left',
+                cursor: 'pointer',
                 background: form.plastic_type === type ? `${info.color}25` : 'rgba(255,255,255,0.04)',
                 border: form.plastic_type === type ? `1.5px solid ${info.color}60` : '1.5px solid rgba(255,255,255,0.08)',
                 color: form.plastic_type === type ? '#fff' : 'rgba(255,255,255,0.55)',
               }}
             >
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full" style={{ background: info.color }} />
-                <span>{type}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 12, height: 12, borderRadius: '50%', background: info.color, flexShrink: 0 }} />
+                <span style={{ fontSize: 14, fontWeight: 600 }}>{type}</span>
               </div>
-              <div className="text-xs mt-1" style={{ color: form.plastic_type === type ? info.color : 'rgba(255,255,255,0.35)' }}>
+              <div style={{ fontSize: 12, marginTop: 6, fontWeight: 600, color: form.plastic_type === type ? ptsColor : 'rgba(255,255,255,0.4)' }}>
                 {info.points} pts/kg
               </div>
             </button>
-          ))}
+          )})}
         </div>
       </div>
 
       {/* District */}
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: 'rgba(255,255,255,0.7)' }}>
-          District
-        </label>
+        <label className="form-field-label">District</label>
         <select
           name="district"
           value={form.district}
           onChange={handleChange}
-          className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none"
+          className="form-select w-full rounded-xl px-4 py-3 text-sm outline-none"
           style={{
             background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.1)',
@@ -205,10 +204,8 @@ export default function LogCollectionForm({ onSuccess, onPlasticTypeChange }) {
 
       {/* Location */}
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: 'rgba(255,255,255,0.7)' }}>
-          GPS Location
-        </label>
-        <div className="grid grid-cols-2 gap-2 mb-2">
+        <label className="form-field-label">GPS Location</label>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
           <input
             type="number"
             name="latitude"
@@ -234,11 +231,14 @@ export default function LogCollectionForm({ onSuccess, onPlasticTypeChange }) {
           type="button"
           onClick={detectLocation}
           disabled={locating}
-          className="text-sm px-4 py-2 rounded-xl transition-all"
           style={{
+            fontSize: 13,
+            padding: '10px 16px',
+            borderRadius: 12,
+            cursor: locating ? 'wait' : 'pointer',
             background: 'rgba(10,124,110,0.15)',
             border: '1px solid rgba(10,124,110,0.3)',
-            color: '#0A7C6E',
+            color: '#34D399',
           }}
         >
           {locating ? '📡 Detecting…' : '📍 Use My Location'}
@@ -247,9 +247,7 @@ export default function LogCollectionForm({ onSuccess, onPlasticTypeChange }) {
 
       {/* Notes */}
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: 'rgba(255,255,255,0.7)' }}>
-          Notes (optional)
-        </label>
+        <label className="form-field-label">Notes (optional)</label>
         <textarea
           name="notes"
           value={form.notes}
@@ -299,8 +297,19 @@ export default function LogCollectionForm({ onSuccess, onPlasticTypeChange }) {
       <button
         type="submit"
         disabled={status === 'loading'}
-        className="w-full py-4 rounded-xl font-semibold text-white transition-all duration-200 hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed animate-pulse-glow"
-        style={{ background: 'linear-gradient(135deg, #0A7C6E, #0d9e8e)' }}
+        style={{
+          width: '100%',
+          padding: '16px 24px',
+          borderRadius: 12,
+          fontWeight: 600,
+          fontSize: 15,
+          color: '#fff',
+          border: 'none',
+          cursor: status === 'loading' ? 'not-allowed' : 'pointer',
+          opacity: status === 'loading' ? 0.6 : 1,
+          background: 'linear-gradient(135deg, #0A7C6E, #0d9e8e)',
+          marginTop: 4,
+        }}
       >
         {status === 'loading' ? '⏳ Submitting…' : '🌊 Log Collection'}
       </button>

@@ -8,42 +8,65 @@ export default function OffTakerGuide({ plasticType = 'PET' }) {
   const typeColor = PLASTIC_TYPES[plasticType]?.color || '#3B82F6'
 
   return (
-    <div className="glass-card p-5">
-      <h3 className="text-sm font-semibold text-white mb-1">Where does this waste go?</h3>
-      <p className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>
+    <div className="glass-card">
+      <h3 style={{ fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 6, marginTop: 0 }}>
+        Where does this waste go?
+      </h3>
+      <p style={{ fontSize: 12, marginBottom: 16, color: 'rgba(255,255,255,0.5)', lineHeight: 1.55, marginTop: 0 }}>
         Recommended partners for <span style={{ color: typeColor, fontWeight: 700 }}>{plasticType}</span> plastic in the value chain.
       </p>
 
       {collector && (
         <div
-          className="rounded-xl p-3 mb-3"
-          style={{ background: 'rgba(10,124,110,0.08)', border: '1px solid rgba(10,124,110,0.22)' }}
+          style={{
+            padding: '14px 16px',
+            borderRadius: 12,
+            marginBottom: 12,
+            background: 'rgba(10,124,110,0.08)',
+            border: '1px solid rgba(10,124,110,0.22)',
+          }}
         >
-          <div className="text-xs uppercase tracking-wide mb-1" style={{ color: 'rgba(255,255,255,0.35)' }}>
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6, color: 'rgba(255,255,255,0.4)' }}>
             Collection
           </div>
-          <div className="text-sm font-semibold text-white">{collector.name}</div>
-          <div className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.45)' }}>{collector.location}</div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: '#fff' }}>{collector.name}</div>
+          <div style={{ fontSize: 12, marginTop: 4, color: 'rgba(255,255,255,0.5)' }}>{collector.location}</div>
         </div>
       )}
 
-      <div className="flex flex-col gap-2 mb-4">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
         {offTakers.map((partner) => (
           <div
             key={partner.id}
-            className="rounded-xl p-3"
-            style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}
+            style={{
+              padding: '14px 16px',
+              borderRadius: 12,
+              background: 'rgba(59,130,246,0.08)',
+              border: '1px solid rgba(59,130,246,0.2)',
+            }}
           >
-            <div className="flex items-center gap-2">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white"
-                style={{ background: 'rgba(59,130,246,0.25)', border: '1px solid rgba(59,130,246,0.35)' }}
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 10,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: '#fff',
+                  flexShrink: 0,
+                  background: 'rgba(59,130,246,0.25)',
+                  border: '1px solid rgba(59,130,246,0.35)',
+                }}
               >
                 {partner.initials}
               </div>
               <div>
-                <div className="text-sm font-semibold text-white">{partner.name}</div>
-                <div className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{partner.district}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#fff' }}>{partner.name}</div>
+                <div style={{ fontSize: 12, marginTop: 2, color: 'rgba(255,255,255,0.45)' }}>{partner.district}</div>
               </div>
             </div>
           </div>
@@ -52,8 +75,7 @@ export default function OffTakerGuide({ plasticType = 'PET' }) {
 
       <Link
         to="/ecosystem"
-        className="text-xs font-semibold underline underline-offset-4"
-        style={{ color: '#0A7C6E' }}
+        style={{ fontSize: 12, fontWeight: 600, color: '#34D399', textDecoration: 'underline', textUnderlineOffset: 4 }}
       >
         View full partner directory →
       </Link>
