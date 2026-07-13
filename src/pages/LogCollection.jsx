@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import AnimateInView from '../components/ui/AnimateInView'
 import LogCollectionForm from '../components/forms/LogCollectionForm'
 import OffTakerGuide from '../components/stakeholders/OffTakerGuide'
+import PageContextPhoto from '../components/ui/PageContextPhoto'
+import { FIELD_IMAGES } from '../lib/images'
 
 export default function LogCollection() {
   const [submitted, setSubmitted] = useState(false)
@@ -48,6 +50,11 @@ export default function LogCollection() {
 
           <AnimateInView variant="fade-right">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <PageContextPhoto
+                src={FIELD_IMAGES.shoreline}
+                fallbackKey="shoreline"
+                alt="Plastic pollution along the Lake Kivu shoreline at Saga Bay"
+              />
               <OffTakerGuide plasticType={plasticType} />
 
               <div className="glass-card p-5">

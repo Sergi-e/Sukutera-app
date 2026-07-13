@@ -8,8 +8,10 @@ import TimelineChart from '../components/dashboard/TimelineChart'
 import EnvironmentalEquivalents from '../components/dashboard/EnvironmentalEquivalents'
 import Leaderboard from '../components/collectors/Leaderboard'
 import AnimateInView from '../components/ui/AnimateInView'
+import PageContextPhoto from '../components/ui/PageContextPhoto'
 import { DISTRICT_TARGETS, PLASTIC_TYPES, DISTRICTS } from '../lib/constants'
 import { STAKEHOLDER_CATEGORIES, STAKEHOLDERS } from '../lib/stakeholders'
+import { FIELD_IMAGES } from '../lib/images'
 import { formatKg, percentOf } from '../utils/formatters'
 
 const DEMO_MAX = 5
@@ -277,6 +279,14 @@ export default function ImpactDashboard() {
             </div>
           </div>
         </AnimateInView>
+
+        <div style={{ marginBottom: 32 }}>
+          <PageContextPhoto
+            src={FIELD_IMAGES.plasticBag}
+            fallbackKey="plasticBag"
+            alt="Bag of collected plastic bottles from the Lake Kivu shore"
+          />
+        </div>
 
         {/* ─── Stat cards ─── */}
         <div style={{ marginBottom: 32 }}>

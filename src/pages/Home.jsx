@@ -5,9 +5,13 @@ import { useCollectors } from '../hooks/useCollectors'
 import { formatKg } from '../utils/formatters'
 import { DISTRICT_TARGETS } from '../lib/constants'
 import { STAKEHOLDER_CATEGORIES, STAKEHOLDERS } from '../lib/stakeholders'
+import { FIELD_IMAGES } from '../lib/images'
+import StakeholderCard from '../components/stakeholders/StakeholderCard'
 import AnimateInView from '../components/ui/AnimateInView'
 import LiveActivityFeed from '../components/home/LiveActivityFeed'
 import WhyItMatters from '../components/home/WhyItMatters'
+import HeroBackground from '../components/home/HeroBackground'
+import FieldResearchGallery from '../components/home/FieldResearchGallery'
 
 function AnimatedNumber({ target, suffix = '' }) {
   const [value, setValue] = useState(0)
@@ -70,6 +74,7 @@ export default function Home() {
 
       {/* ─── HERO ─────────────────────────────────────────────────────── */}
       <section
+        className="hero-section"
         style={{
           position: 'relative',
           minHeight: '100vh',
@@ -82,16 +87,7 @@ export default function Home() {
           overflow: 'hidden',
         }}
       >
-        {/* Background gradient */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background:
-              'radial-gradient(ellipse 80% 60% at 50% 70%, rgba(10,124,110,0.12) 0%, transparent 70%), radial-gradient(ellipse 60% 50% at 30% 40%, rgba(26,75,122,0.15) 0%, transparent 60%), #0B1F2E',
-            zIndex: 0,
-          }}
-        />
+        <HeroBackground />
 
         {/* Pulsing rings */}
         <div
@@ -102,7 +98,7 @@ export default function Home() {
             alignItems: 'center',
             justifyContent: 'center',
             pointerEvents: 'none',
-            zIndex: 0,
+            zIndex: 1,
           }}
         >
           {[320, 520, 720, 920].map((size, i) => (
@@ -131,12 +127,12 @@ export default function Home() {
             height: 120,
             background:
               'linear-gradient(180deg, transparent 0%, rgba(10,124,110,0.07) 50%, rgba(10,124,110,0.13) 100%)',
-            zIndex: 0,
+            zIndex: 1,
           }}
         />
 
         {/* ─── Content ─── */}
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: 860, width: '100%', margin: '0 auto' }}>
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: 860, width: '100%', margin: '0 auto' }}>
 
           {/* Live badge */}
           <div
@@ -409,6 +405,7 @@ export default function Home() {
 
       <LiveActivityFeed collections={collections} collectors={collectors} />
       <WhyItMatters />
+      <FieldResearchGallery />
 
       {/* ─── HOW IT WORKS ───────────────────────────────────────────────── */}
       <section style={{ padding: '80px 24px' }}>
@@ -467,6 +464,15 @@ export default function Home() {
               </p>
             </div>
           </AnimateInView>
+
+          <div style={{ marginBottom: 32 }}>
+            <StakeholderCard
+              stakeholder={STAKEHOLDERS.find((s) => s.featured)}
+              categoryColor={STAKEHOLDER_CATEGORIES.collection.color}
+              coverImage={FIELD_IMAGES.wasteHouse}
+              coverImageKey="wasteHouse"
+            />
+          </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 32 }}>
             {Object.values(STAKEHOLDER_CATEGORIES).map((category) => {

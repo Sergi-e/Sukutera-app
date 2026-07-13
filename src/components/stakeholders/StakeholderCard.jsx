@@ -1,8 +1,11 @@
 import { useState } from 'react'
+import { FIELD_IMAGE_FALLBACKS } from '../../lib/images'
 
-export default function StakeholderCard({ stakeholder, categoryColor }) {
+export default function StakeholderCard({ stakeholder, categoryColor, coverImage, coverImageKey }) {
   const { name, initials, location, district, description, role, contact, featured, accepts } = stakeholder
   const [contactNote, setContactNote] = useState(false)
+  const [coverUrl, setCoverUrl] = useState(coverImage)
+  const [coverLoaded, setCoverLoaded] = useState(false)
 
   function handleContact() {
     setContactNote(true)
@@ -16,13 +19,14 @@ export default function StakeholderCard({ stakeholder, categoryColor }) {
         border: `1px solid ${featured ? `${categoryColor}35` : 'rgba(255,255,255,0.08)'}`,
         borderLeft: `4px solid ${categoryColor}`,
         borderRadius: 14,
-        padding: '18px 20px',
+        padding: coverImage ? '0' : '18px 20px',
         display: 'flex',
         flexDirection: 'column',
-        gap: 14,
+        gap: coverImage ? 0 : 14,
         transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease',
         boxShadow: featured ? `0 0 24px ${categoryColor}12` : `0 0 0 0 ${categoryColor}00`,
         position: 'relative',
+        overflow: 'hidden',
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-3px)'
@@ -33,6 +37,25 @@ export default function StakeholderCard({ stakeholder, categoryColor }) {
         e.currentTarget.style.boxShadow = featured ? `0 0 24px ${categoryColor}12` : `0 0 0 0 ${categoryColor}00`
       }}
     >
+      {coverImage && (
+        <div className="stakeholder-card-cover">
+          <img
+            src={coverUrl}
+            alt={`${name} field site`}
+            loading="lazy"
+            className={`stakeholder-card-cover__img ${coverLoaded ? 'field-photo--loaded' : ''}`}
+            onLoad={() => setCoverLoaded(true)}
+            onError={() => {
+              if (coverImageKey && FIELD_IMAGE_FALLBACKS[coverImageKey]) {
+                setCoverUrl(FIELD_IMAGE_FALLBACKS[coverImageKey])
+              }
+            }}
+          />
+          <div className="stakeholder-card-cover__overlay" />
+        </div>
+      )}
+
+      <div style={{ padding: coverImage ? '18px 20px' : 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
       {featured && (
         <div
           style={{
@@ -193,6 +216,7 @@ export default function StakeholderCard({ stakeholder, categoryColor }) {
             📞 {contact}
           </div>
         )}
+      </div>
       </div>
     </article>
   )

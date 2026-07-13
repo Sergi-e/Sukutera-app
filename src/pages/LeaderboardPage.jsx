@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 import { useCollectors } from '../hooks/useCollectors'
 import AnimateInView from '../components/ui/AnimateInView'
+import PageContextPhoto from '../components/ui/PageContextPhoto'
 import Leaderboard from '../components/collectors/Leaderboard'
+import { FIELD_IMAGES } from '../lib/images'
 import { formatKg } from '../utils/formatters'
 
 export default function LeaderboardPage() {
@@ -27,6 +29,14 @@ export default function LeaderboardPage() {
             </p>
           </div>
         </AnimateInView>
+
+        <div style={{ marginBottom: 32 }}>
+          <PageContextPhoto
+            src={FIELD_IMAGES.collector}
+            fallbackKey="collector"
+            alt="Waste collector working at the Lake Kivu shoreline"
+          />
+        </div>
 
         {/* Podium — top 3 */}
         {sorted.length >= 3 && (
