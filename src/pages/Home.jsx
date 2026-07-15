@@ -8,6 +8,8 @@ import { STAKEHOLDER_CATEGORIES, STAKEHOLDERS } from '../lib/stakeholders'
 import AnimateInView from '../components/ui/AnimateInView'
 import LiveActivityFeed from '../components/home/LiveActivityFeed'
 import WhyItMatters from '../components/home/WhyItMatters'
+import HeroBackground from '../components/home/HeroBackground'
+import FieldResearchGallery from '../components/home/FieldResearchGallery'
 
 function AnimatedNumber({ target, suffix = '' }) {
   const [value, setValue] = useState(0)
@@ -70,6 +72,7 @@ export default function Home() {
 
       {/* ─── HERO ─────────────────────────────────────────────────────── */}
       <section
+        className="hero-section"
         style={{
           position: 'relative',
           minHeight: '100vh',
@@ -82,16 +85,7 @@ export default function Home() {
           overflow: 'hidden',
         }}
       >
-        {/* Background gradient */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background:
-              'radial-gradient(ellipse 80% 60% at 50% 70%, rgba(10,124,110,0.12) 0%, transparent 70%), radial-gradient(ellipse 60% 50% at 30% 40%, rgba(26,75,122,0.15) 0%, transparent 60%), #0B1F2E',
-            zIndex: 0,
-          }}
-        />
+        <HeroBackground />
 
         {/* Pulsing rings */}
         <div
@@ -102,7 +96,7 @@ export default function Home() {
             alignItems: 'center',
             justifyContent: 'center',
             pointerEvents: 'none',
-            zIndex: 0,
+            zIndex: 1,
           }}
         >
           {[320, 520, 720, 920].map((size, i) => (
@@ -131,76 +125,57 @@ export default function Home() {
             height: 120,
             background:
               'linear-gradient(180deg, transparent 0%, rgba(10,124,110,0.07) 50%, rgba(10,124,110,0.13) 100%)',
-            zIndex: 0,
+            zIndex: 1,
           }}
         />
 
         {/* ─── Content ─── */}
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: 860, width: '100%', margin: '0 auto' }}>
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: 860, width: '100%', margin: '0 auto' }}>
 
-          {/* Live badge */}
-          <div
-            className="animate-fade-up"
-            style={{
-              animationDelay: '0s',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '7px 18px',
-              borderRadius: 999,
-              marginBottom: 28,
-              background: 'rgba(10,124,110,0.15)',
-              border: '1px solid rgba(10,124,110,0.4)',
-              color: '#F5E6C8',
-              fontSize: 13,
-              fontWeight: 500,
-            }}
-          >
+          {/* Live status — editorial chip, no pill */}
+          <div className="animate-fade-up live-chip" style={{ animationDelay: '0s', marginBottom: 32 }}>
             <span
               style={{
-                width: 8,
-                height: 8,
+                width: 6,
+                height: 6,
                 borderRadius: '50%',
                 background: '#34d399',
                 display: 'inline-block',
-                animation: 'pulse 2s ease-in-out infinite',
+                flexShrink: 0,
+                animation: 'pulse 2.5s ease-in-out infinite',
               }}
             />
             Live · Lake Kivu, Rwanda · 3 Districts Active
           </div>
 
-          {/* SUKUTERA brand heading */}
+          {/* SUKUTERA — Fraunces italic, the editorial serif with calligraphic warmth */}
           <h1
-            className="animate-fade-up"
+            className="animate-fade-up heading-display"
             style={{
               animationDelay: '0.1s',
-              fontSize: 'clamp(52px, 11vw, 112px)',
-              fontWeight: 900,
-              letterSpacing: '-0.03em',
-              lineHeight: 1,
-              color: '#FFFFFF',
-              marginBottom: 20,
+              fontSize: 'clamp(58px, 11vw, 116px)',
+              fontWeight: 800,
+              marginBottom: 18,
             }}
           >
-            SUKUTERA
+            Sukutera
           </h1>
 
-          {/* Tagline */}
+          {/* Tagline — Space Grotesk uppercase, contrasts against the serif above */}
           <p
             className="animate-fade-up"
             style={{
               animationDelay: '0.2s',
-              fontSize: 'clamp(20px, 4vw, 32px)',
-              fontWeight: 700,
-              letterSpacing: '0.06em',
-              marginBottom: 20,
-              background: 'linear-gradient(135deg, #0A7C6E 0%, #F5E6C8 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
+              fontFamily: 'var(--font-sans)',
+              fontSize: 'clamp(13px, 2.2vw, 17px)',
+              fontWeight: 600,
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              color: 'var(--color-kivu)',
+              marginBottom: 28,
             }}
           >
-            Track.&nbsp; Sort.&nbsp; Sustain.
+            Track · Sort · Sustain
           </p>
 
           {/* Sub-copy */}
@@ -208,11 +183,13 @@ export default function Home() {
             className="animate-fade-up"
             style={{
               animationDelay: '0.3s',
-              fontSize: 17,
-              color: 'rgba(255,255,255,0.6)',
-              lineHeight: 1.7,
-              maxWidth: 580,
-              margin: '0 auto 40px',
+              fontFamily: 'var(--font-sans)',
+              fontSize: 16,
+              color: 'var(--color-stone)',
+              lineHeight: 1.75,
+              maxWidth: 540,
+              margin: '0 auto 44px',
+              fontWeight: 400,
             }}
           >
             Sukutera turns plastic collection into a reward economy along the shores of Lake
@@ -236,93 +213,102 @@ export default function Home() {
               to="/log"
               style={{
                 display: 'inline-block',
-                padding: '14px 32px',
-                borderRadius: 14,
-                background: 'linear-gradient(135deg, #0A7C6E, #0d9e8e)',
-                color: '#FFFFFF',
-                fontWeight: 700,
-                fontSize: 15,
+                padding: '13px 30px',
+                borderRadius: 6,
+                background: 'var(--color-kivu)',
+                color: '#fff',
+                fontFamily: 'var(--font-sans)',
+                fontWeight: 600,
+                fontSize: 14,
+                letterSpacing: '0.04em',
                 textDecoration: 'none',
-                minWidth: 180,
-                boxShadow: '0 0 20px rgba(10,124,110,0.35)',
+                minWidth: 156,
+                textAlign: 'center',
               }}
             >
-              + Log Collection
+              Log Collection
             </Link>
             <Link
               to="/map"
               style={{
                 display: 'inline-block',
-                padding: '14px 32px',
-                borderRadius: 14,
-                background: 'rgba(255,255,255,0.07)',
-                border: '1px solid rgba(255,255,255,0.18)',
-                color: 'rgba(255,255,255,0.88)',
-                fontWeight: 700,
-                fontSize: 15,
+                padding: '12px 30px',
+                borderRadius: 6,
+                background: 'transparent',
+                border: '1px solid rgba(238,228,202,0.22)',
+                color: 'var(--color-parchment)',
+                fontFamily: 'var(--font-sans)',
+                fontWeight: 600,
+                fontSize: 14,
+                letterSpacing: '0.04em',
                 textDecoration: 'none',
-                minWidth: 180,
+                minWidth: 156,
+                textAlign: 'center',
               }}
             >
-              🗺 View Live Map
+              View Live Map
             </Link>
             <Link
               to="/ecosystem"
               style={{
                 display: 'inline-block',
-                padding: '14px 32px',
-                borderRadius: 14,
-                background: 'rgba(59,130,246,0.1)',
-                border: '1px solid rgba(59,130,246,0.25)',
-                color: '#60A5FA',
-                fontWeight: 700,
-                fontSize: 15,
+                padding: '12px 30px',
+                borderRadius: 6,
+                background: 'transparent',
+                border: '1px solid rgba(12,148,133,0.30)',
+                color: 'var(--color-kivu)',
+                fontFamily: 'var(--font-sans)',
+                fontWeight: 600,
+                fontSize: 14,
+                letterSpacing: '0.04em',
                 textDecoration: 'none',
-                minWidth: 180,
+                minWidth: 156,
+                textAlign: 'center',
               }}
             >
-              🔗 Partner Ecosystem
+              Partner Ecosystem
             </Link>
           </div>
 
-          {/* ─── 3 Stat cards ─── */}
+          {/* ─── Editorial stat bar — DM Mono numbers, no card boxes ─── */}
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-              gap: 16,
-              maxWidth: 860,
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: 0,
+              maxWidth: 720,
               margin: '0 auto',
+              borderTop: '1px solid rgba(238,228,202,0.10)',
+              paddingTop: 28,
             }}
           >
-            <StatCard
-              icon="♻️"
-              value={<AnimatedNumber target={Math.round(totalKg * 10) / 10} suffix=" kg" />}
-              label="Total KG Collected"
-              color="#0A7C6E"
-              index={0}
-            />
-            <StatCard
-              icon="👥"
-              value={<AnimatedNumber target={collectors.length} />}
-              label="Active Collectors"
-              color="#3B82F6"
-              index={1}
-            />
-            <StatCard
-              icon="🌊"
-              value={<AnimatedNumber target={shorelineCoverage} suffix=" km" />}
-              label="Shoreline Coverage"
-              color="#F5E6C8"
-              index={2}
-            />
-            <StatCard
-              icon="🔗"
-              value={<AnimatedNumber target={STAKEHOLDERS.length} />}
-              label="Ecosystem Partners"
-              color="#10B981"
-              index={3}
-            />
+            {[
+              { value: Math.round(totalKg * 10) / 10, suffix: ' kg', label: 'Plastic Recovered', color: 'var(--color-kivu)' },
+              { value: collectors.length, suffix: '', label: 'Active Collectors', color: 'var(--color-parchment)' },
+              { value: shorelineCoverage, suffix: ' km', label: 'Shoreline Coverage', color: 'var(--color-parchment)' },
+              { value: STAKEHOLDERS.length, suffix: '', label: 'Ecosystem Partners', color: 'var(--color-ember)' },
+            ].map((s, i) => (
+              <div
+                key={s.label}
+                style={{
+                  flex: '1 1 150px',
+                  padding: '0 20px 4px',
+                  textAlign: 'center',
+                  borderRight: i < 3 ? '1px solid rgba(238,228,202,0.08)' : 'none',
+                }}
+              >
+                <div
+                  className="metric-value"
+                  style={{ fontSize: 'clamp(24px, 4vw, 36px)', color: s.color, marginBottom: 5 }}
+                >
+                  <AnimatedNumber target={s.value} suffix={s.suffix} />
+                </div>
+                <div style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-muted)' }}>
+                  {s.label}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -351,10 +337,11 @@ export default function Home() {
         <div style={{ maxWidth: 1120, margin: '0 auto' }}>
           <AnimateInView variant="fade-left">
             <div style={{ textAlign: 'center', marginBottom: 48 }}>
-              <h2 style={{ fontSize: 30, fontWeight: 900, color: '#FFFFFF', marginBottom: 10 }}>
+              <div className="eyebrow-label" style={{ justifyContent: 'center', borderLeft: 'none', borderBottom: '1px solid var(--color-kivu)', paddingLeft: 0, paddingBottom: 8, marginBottom: 16, display: 'inline-flex' }}>Coverage</div>
+              <h2 className="heading-section" style={{ fontSize: 'clamp(26px, 4vw, 38px)', marginBottom: 12 }}>
                 3 Districts. One Lake.
               </h2>
-              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15 }}>
+              <p style={{ color: 'var(--color-stone)', fontSize: 15, fontFamily: 'var(--font-sans)' }}>
                 Collection activity across the Lake Kivu shoreline
               </p>
             </div>
@@ -409,16 +396,18 @@ export default function Home() {
 
       <LiveActivityFeed collections={collections} collectors={collectors} />
       <WhyItMatters />
+      <FieldResearchGallery />
 
       {/* ─── HOW IT WORKS ───────────────────────────────────────────────── */}
       <section style={{ padding: '80px 24px' }}>
         <div style={{ maxWidth: 1120, margin: '0 auto' }}>
           <AnimateInView variant="fade-left">
             <div style={{ textAlign: 'center', marginBottom: 48 }}>
-              <h2 style={{ fontSize: 30, fontWeight: 900, color: '#FFFFFF', marginBottom: 10 }}>
+              <div className="eyebrow-label" style={{ justifyContent: 'center', borderLeft: 'none', borderBottom: '1px solid var(--color-kivu)', paddingLeft: 0, paddingBottom: 8, marginBottom: 16, display: 'inline-flex' }}>Process</div>
+              <h2 className="heading-section" style={{ fontSize: 'clamp(26px, 4vw, 38px)', marginBottom: 12 }}>
                 How Sukutera Works
               </h2>
-              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15 }}>
+              <p style={{ color: 'var(--color-stone)', fontSize: 15, fontFamily: 'var(--font-sans)' }}>
                 A simple loop that rewards conservation
               </p>
             </div>
@@ -459,10 +448,11 @@ export default function Home() {
         <div style={{ maxWidth: 1120, margin: '0 auto' }}>
           <AnimateInView variant="fade-left">
             <div style={{ textAlign: 'center', marginBottom: 48 }}>
-              <h2 style={{ fontSize: 30, fontWeight: 900, color: '#FFFFFF', marginBottom: 10 }}>
+              <div className="eyebrow-label" style={{ justifyContent: 'center', borderLeft: 'none', borderBottom: '1px solid var(--color-kivu)', paddingLeft: 0, paddingBottom: 8, marginBottom: 16, display: 'inline-flex' }}>Partners</div>
+              <h2 className="heading-section" style={{ fontSize: 'clamp(26px, 4vw, 38px)', marginBottom: 12 }}>
                 Partner Ecosystem
               </h2>
-              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15, maxWidth: 520, margin: '0 auto' }}>
+              <p style={{ color: 'var(--color-stone)', fontSize: 15, fontFamily: 'var(--font-sans)', maxWidth: 520, margin: '0 auto' }}>
                 Collectors, recyclers, and compost processors working together across Rwanda&apos;s circular economy
               </p>
             </div>

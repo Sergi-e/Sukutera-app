@@ -4,6 +4,7 @@ import AnimateInView from '../components/ui/AnimateInView'
 import StakeholderCard from '../components/stakeholders/StakeholderCard'
 import ValueChainFlow from '../components/ecosystem/ValueChainFlow'
 import { STAKEHOLDER_CATEGORIES, STAKEHOLDERS, getCollectionPartner } from '../lib/stakeholders'
+import { FIELD_IMAGES } from '../lib/images'
 
 const FILTERS = [
   { id: 'all', label: 'All Partners' },
@@ -82,7 +83,12 @@ export default function EcosystemPage() {
         {featured && (
           <AnimateInView variant="fade-up">
             <div style={{ marginBottom: 28 }}>
-              <StakeholderCard stakeholder={featured} categoryColor={STAKEHOLDER_CATEGORIES.collection.color} />
+              <StakeholderCard
+                stakeholder={featured}
+                categoryColor={STAKEHOLDER_CATEGORIES.collection.color}
+                coverImage={FIELD_IMAGES.wasteHouse}
+                coverImageKey="wasteHouse"
+              />
             </div>
           </AnimateInView>
         )}

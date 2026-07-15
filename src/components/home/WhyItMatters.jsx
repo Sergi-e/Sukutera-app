@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import AnimateInView from '../ui/AnimateInView'
 import CountUpOnView from '../ui/CountUpOnView'
+import { FIELD_IMAGES, FIELD_IMAGE_FALLBACKS } from '../../lib/images'
 
 const STATS = [
   {
@@ -26,22 +28,29 @@ const STATS = [
 ]
 
 export default function WhyItMatters() {
+  const [imgSrc, setImgSrc] = useState(FIELD_IMAGES.collector)
+
   return (
-    <section
-      style={{
-        padding: '64px 24px',
-        background: 'linear-gradient(135deg, rgba(10,124,110,0.12) 0%, rgba(26,75,122,0.18) 100%)',
-        borderTop: '1px solid rgba(255,255,255,0.06)',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-      }}
-    >
-      <div style={{ maxWidth: 1120, margin: '0 auto' }}>
+    <section className="why-it-matters">
+      {/* TODO: Replace with actual field photo from /public/images/collector.jpg */}
+      {/* Using <img> (not background-image) so the browser respects EXIF orientation */}
+      <img
+        src={imgSrc}
+        alt=""
+        aria-hidden="true"
+        className="why-it-matters__photo"
+        onError={() => setImgSrc(FIELD_IMAGE_FALLBACKS.collector)}
+      />
+      <div className="why-it-matters__overlay" aria-hidden="true" />
+
+      <div className="why-it-matters__content">
         <AnimateInView variant="fade-left">
           <div style={{ textAlign: 'center', marginBottom: 40 }}>
-            <h2 style={{ fontSize: 30, fontWeight: 900, color: '#FFFFFF', marginBottom: 10 }}>
+            <div className="eyebrow-label" style={{ justifyContent: 'center', borderLeft: 'none', borderBottom: '1px solid var(--color-kivu)', paddingLeft: 0, paddingBottom: 8, marginBottom: 16, display: 'inline-flex' }}>The Challenge</div>
+            <h2 className="heading-section" style={{ fontSize: 'clamp(26px, 4vw, 38px)', marginBottom: 12 }}>
               Why It Matters
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15 }}>
+            <p style={{ color: 'var(--color-stone)', fontSize: 15, fontFamily: 'var(--font-sans)' }}>
               The scale of the challenge — and the opportunity at Lake Kivu
             </p>
           </div>
@@ -56,15 +65,7 @@ export default function WhyItMatters() {
         >
           {STATS.map((stat, i) => (
             <AnimateInView key={stat.label} variant="fade-up" delay={i * 100}>
-              <div
-                style={{
-                  textAlign: 'center',
-                  padding: '32px 24px',
-                  borderRadius: 16,
-                  background: 'rgba(15,42,61,0.65)',
-                  border: `1px solid ${stat.color}25`,
-                }}
-              >
+              <div className="why-it-matters__stat-card">
                 <div
                   style={{
                     fontSize: 'clamp(36px, 5vw, 52px)',
@@ -80,7 +81,7 @@ export default function WhyItMatters() {
                     decimals={stat.decimals}
                   />
                 </div>
-                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5 }}>
+                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.75)', lineHeight: 1.5 }}>
                   {stat.label}
                 </p>
               </div>

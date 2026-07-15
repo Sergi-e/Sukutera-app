@@ -20,18 +20,11 @@ export default function Navbar() {
     const onScroll = () => {
       const y = window.scrollY
       setScrolled(y > 40)
-
-      if (y < 80) {
-        setHidden(false)
-      } else if (y > lastScrollY.current) {
-        setHidden(true)
-      } else {
-        setHidden(false)
-      }
-
+      if (y < 80) setHidden(false)
+      else if (y > lastScrollY.current) setHidden(true)
+      else setHidden(false)
       lastScrollY.current = y
     }
-
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -40,50 +33,93 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`navbar-smart fixed top-0 left-0 right-0 z-50 ${hidden ? 'navbar-smart--hidden' : ''} ${
-        scrolled ? 'py-3' : 'py-5'
-      }`}
+      className={`navbar-smart fixed top-0 left-0 right-0 z-50 ${hidden ? 'navbar-smart--hidden' : ''} ${scrolled ? 'py-3' : 'py-5'}`}
       style={{
+        fontFamily: 'var(--font-sans)',
         background: scrolled
-          ? 'rgba(11, 31, 46, 0.95)'
-          : 'linear-gradient(180deg, rgba(11,31,46,0.9) 0%, transparent 100%)',
-        backdropFilter: scrolled ? 'blur(20px)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : 'none',
+          ? 'rgba(7, 17, 26, 0.96)'
+          : 'linear-gradient(180deg, rgba(7,17,26,0.85) 0%, transparent 100%)',
+        backdropFilter: scrolled ? 'blur(16px)' : 'none',
+        borderBottom: scrolled ? '1px solid rgba(238,228,202,0.06)' : 'none',
       }}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3 group">
+        {/* Wordmark — Fraunces italic logotype */}
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-white text-sm"
-            style={{ background: 'linear-gradient(135deg, #0A7C6E, #1A4B7A)' }}
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: 8,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontWeight: 800,
+              fontSize: 18,
+              color: '#fff',
+              background: 'var(--color-kivu)',
+              flexShrink: 0,
+            }}
           >
             S
           </div>
           <div>
-            <span className="font-bold text-lg tracking-wide text-white">Sukutera</span>
-            <div className="text-xs leading-none" style={{ color: 'rgba(245,230,200,0.7)' }}>
+            <span
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontStyle: 'italic',
+                fontWeight: 700,
+                fontSize: 18,
+                letterSpacing: '-0.02em',
+                color: 'var(--color-parchment)',
+                lineHeight: 1,
+              }}
+            >
+              Sukutera
+            </span>
+            <div
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: 9,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'var(--color-muted)',
+                lineHeight: 1,
+                marginTop: 2,
+              }}
+            >
               Lake Kivu, Rwanda
             </div>
           </div>
         </Link>
 
-        <div className="hidden md:flex items-center gap-1">
+        {/* Desktop nav links */}
+        <div className="hidden md:flex items-center gap-0">
           {NAV_LINKS.map(({ path, label }) => {
             const active = location.pathname === path
             return (
               <Link
                 key={path}
                 to={path}
-                className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
                 style={{
-                  color: active ? '#F5E6C8' : 'rgba(255,255,255,0.65)',
-                  background: active ? 'rgba(10,124,110,0.18)' : 'transparent',
+                  fontFamily: 'var(--font-sans)',
+                  padding: '6px 14px',
+                  fontSize: 13,
+                  fontWeight: active ? 600 : 400,
+                  letterSpacing: '0.02em',
+                  color: active ? 'var(--color-parchment)' : 'var(--color-stone)',
+                  textDecoration: 'none',
+                  borderBottom: active ? '1px solid var(--color-kivu)' : '1px solid transparent',
+                  paddingBottom: 5,
+                  transition: 'color 0.15s ease, border-color 0.15s ease',
                 }}
                 onMouseEnter={(e) => {
-                  if (!active) e.currentTarget.style.color = '#fff'
+                  if (!active) e.currentTarget.style.color = 'var(--color-parchment)'
                 }}
                 onMouseLeave={(e) => {
-                  if (!active) e.currentTarget.style.color = 'rgba(255,255,255,0.65)'
+                  if (!active) e.currentTarget.style.color = 'var(--color-stone)'
                 }}
               >
                 {label}
@@ -92,58 +128,71 @@ export default function Navbar() {
           })}
         </div>
 
-        <div className="hidden md:flex items-center gap-3">
+        {/* CTA */}
+        <div className="hidden md:flex">
           <Link
             to="/log"
-            className="animate-pulse-glow px-5 py-2.5 rounded-xl font-semibold text-sm text-white transition-all duration-200 hover:scale-105"
-            style={{ background: 'linear-gradient(135deg, #0A7C6E, #0d9e8e)' }}
+            style={{
+              fontFamily: 'var(--font-sans)',
+              padding: '8px 20px',
+              borderRadius: 6,
+              background: 'var(--color-kivu)',
+              color: '#fff',
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: '0.04em',
+              textDecoration: 'none',
+            }}
           >
             + Log Collection
           </Link>
         </div>
 
+        {/* Mobile hamburger */}
         <button
           className="md:hidden flex flex-col gap-1.5 p-2"
           onClick={() => setOpen(!open)}
           aria-label="Menu"
         >
-          <span
-            className="block w-6 h-0.5 transition-all duration-200"
-            style={{
-              background: 'rgba(255,255,255,0.8)',
-              transform: open ? 'rotate(45deg) translate(5px, 5px)' : 'none',
-            }}
-          />
-          <span
-            className="block w-6 h-0.5 transition-all duration-200"
-            style={{
-              background: 'rgba(255,255,255,0.8)',
-              opacity: open ? 0 : 1,
-            }}
-          />
-          <span
-            className="block w-6 h-0.5 transition-all duration-200"
-            style={{
-              background: 'rgba(255,255,255,0.8)',
-              transform: open ? 'rotate(-45deg) translate(5px, -5px)' : 'none',
-            }}
-          />
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="block w-5 h-px transition-all duration-200"
+              style={{
+                background: 'var(--color-stone)',
+                transform:
+                  i === 0 && open ? 'rotate(45deg) translate(4px, 4px)'
+                  : i === 2 && open ? 'rotate(-45deg) translate(4px, -4px)'
+                  : 'none',
+                opacity: i === 1 && open ? 0 : 1,
+              }}
+            />
+          ))}
         </button>
       </div>
 
+      {/* Mobile drawer */}
       {open && (
         <div
-          className="md:hidden mt-2 mx-4 rounded-2xl p-4 flex flex-col gap-1"
-          style={{ background: 'rgba(15,42,61,0.97)', border: '1px solid rgba(255,255,255,0.08)' }}
+          className="md:hidden mt-2 mx-4 rounded-xl p-4 flex flex-col gap-1"
+          style={{
+            background: 'rgba(7,17,26,0.98)',
+            border: '1px solid rgba(238,228,202,0.08)',
+            fontFamily: 'var(--font-sans)',
+          }}
         >
           {NAV_LINKS.map(({ path, label }) => (
             <Link
               key={path}
               to={path}
-              className="px-4 py-3 rounded-xl text-sm font-medium transition-colors"
               style={{
-                color: location.pathname === path ? '#F5E6C8' : 'rgba(255,255,255,0.7)',
-                background: location.pathname === path ? 'rgba(10,124,110,0.15)' : 'transparent',
+                padding: '11px 14px',
+                fontSize: 14,
+                fontWeight: location.pathname === path ? 600 : 400,
+                color: location.pathname === path ? 'var(--color-parchment)' : 'var(--color-stone)',
+                textDecoration: 'none',
+                borderLeft: location.pathname === path ? '2px solid var(--color-kivu)' : '2px solid transparent',
+                paddingLeft: 14,
               }}
             >
               {label}
@@ -151,8 +200,17 @@ export default function Navbar() {
           ))}
           <Link
             to="/log"
-            className="mt-2 px-4 py-3 rounded-xl text-sm font-semibold text-center text-white"
-            style={{ background: 'linear-gradient(135deg, #0A7C6E, #0d9e8e)' }}
+            style={{
+              marginTop: 8,
+              padding: '11px 14px',
+              borderRadius: 6,
+              background: 'var(--color-kivu)',
+              color: '#fff',
+              fontSize: 14,
+              fontWeight: 600,
+              textAlign: 'center',
+              textDecoration: 'none',
+            }}
           >
             + Log Collection
           </Link>

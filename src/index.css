@@ -1,17 +1,47 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/*
+  Sukutera Type System
+  ─────────────────────────────────────────────────────
+  Display / headlines : Fraunces (variable, optical-size aware, Italian editorial warmth)
+  UI / body           : Space Grotesk (variable, geometric with quirky terminals — feels considered)
+  Data / metrics      : DM Mono (monospaced precision — numbers that read as measured, not templated)
+*/
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,300..900&family=Space+Grotesk:wght@300..700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap');
 @import "tailwindcss";
 @import 'leaflet/dist/leaflet.css';
 
 :root {
-  --color-primary: #0A7C6E;
-  --color-secondary: #1A4B7A;
-  --color-accent: #F5E6C8;
-  --color-bg: #0B1F2E;
-  --color-surface: #0F2A3D;
-  --color-surface-2: #142F45;
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-text: #FFFFFF;
-  --color-text-muted: rgba(255, 255, 255, 0.6);
+  /* ── Fonts ───────────────────────────────────────────────── */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-sans:    'Space Grotesk', system-ui, sans-serif;
+  --font-mono:    'DM Mono', 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* ── Colour palette ─────────────────────────────────────── */
+  /* Backgrounds — ink-black, not generic "dark navy" */
+  --color-bg:        #07111A;
+  --color-surface:   #0C1B2A;
+  --color-surface-2: #111F30;
+
+  /* Lake Kivu teal — more vivid and specific than generic teal */
+  --color-kivu:      #0C9485;
+  --color-kivu-dim:  rgba(12, 148, 133, 0.14);
+  --color-kivu-glow: rgba(12, 148, 133, 0.28);
+
+  /* Terracotta ember — urgency, data emphasis, warm contrast */
+  --color-ember:     #C45B1E;
+  --color-ember-dim: rgba(196, 91, 30, 0.14);
+
+  /* Text — warm parchment, not cold white */
+  --color-parchment: #EEE4CA;
+  --color-stone:     rgba(238, 228, 202, 0.50);
+  --color-muted:     rgba(238, 228, 202, 0.30);
+
+  /* Legacy aliases kept for component compatibility */
+  --color-primary:    var(--color-kivu);
+  --color-secondary:  #1A4B7A;
+  --color-accent:     var(--color-parchment);
+  --color-text:       var(--color-parchment);
+  --color-text-muted: var(--color-stone);
+  --color-border:     rgba(238, 228, 202, 0.07);
 }
 
 * {
@@ -25,12 +55,72 @@ html {
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   background-color: var(--color-bg);
-  color: var(--color-text);
+  color: var(--color-parchment);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+}
+
+/* ── Editorial heading system ─────────────────────────────── */
+/* Display headings use Fraunces for warmth and distinction    */
+.heading-display {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  color: var(--color-parchment);
+}
+
+/* Section headings — Fraunces upright, not italic */
+.heading-section {
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--color-parchment);
+}
+
+/* Data/metric values — DM Mono for measured precision */
+.metric-value {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Editorial eyebrow label — print-style, no pill background */
+.eyebrow-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-kivu);
+  border-left: 2px solid var(--color-kivu);
+  padding-left: 10px;
+  line-height: 1;
+}
+
+/* Live status chip — minimal, no pill */
+.live-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(12, 148, 133, 0.25);
 }
 
 #root {
@@ -301,4 +391,207 @@ body {
   .impact-bottom-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ─── Field photography (Rubavu, Lake Kivu) ─────────────────────────── */
+
+.hero-bg-photo {
+  position: absolute;
+  inset: -8% 0 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center 40%;
+  background-repeat: no-repeat;
+  will-change: transform;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  /* Fallback color prevents blank flash while image loads */
+  background-color: #081828;
+}
+
+.hero-bg-photo.field-photo--loaded {
+  opacity: 1;
+}
+
+.hero-bg-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.why-it-matters {
+  position: relative;
+  padding: 80px 24px;
+  overflow: hidden;
+}
+
+.why-it-matters__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Center the collector horizontally; pull slightly toward upper body, not feet */
+  object-position: center 30%;
+  z-index: 0;
+  /* Prevent layout shift while loading */
+  background-color: #0d2233;
+}
+
+.why-it-matters__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 1;
+}
+
+.why-it-matters__content {
+  position: relative;
+  z-index: 2;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.why-it-matters__stat-card {
+  padding: 28px 24px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  text-align: center;
+  height: 100%;
+}
+
+.field-photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  margin: 0;
+  /* Fallback bg prevents blank white gap on failed load */
+  background-color: #0d2233;
+}
+
+.field-photo__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.4s ease;
+}
+
+.field-photo--loaded .field-photo__img {
+  opacity: 1;
+}
+
+.field-photo--zoom:hover .field-photo__img {
+  transform: scale(1.05);
+}
+
+.field-photo__caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+}
+
+.field-research-section {
+  padding: 80px 24px;
+  background: rgba(10, 124, 110, 0.04);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.field-research-section__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.field-research-section__header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.field-research-section__eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #0A7C6E;
+  margin-bottom: 10px;
+}
+
+.field-research-section__title {
+  font-size: clamp(26px, 4vw, 34px);
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.field-research-section__sub {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+.field-research-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.field-research-grid__item {
+  /* Explicit aspect-ratio prevents layout shift during lazy load */
+  aspect-ratio: 4 / 3;
+  background-color: #0d2233;
+}
+
+@media (max-width: 768px) {
+  .field-research-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stakeholder-card-cover {
+  position: relative;
+  /* 16:9 gives enough context without extreme cropping */
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  /* Fallback while image loads or on error */
+  background-color: #0d2233;
+}
+
+.stakeholder-card-cover__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Bias toward upper portion of image where the structure/subject sits */
+  object-position: center 30%;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.4s ease;
+}
+
+.stakeholder-card-cover__img.field-photo--loaded {
+  opacity: 1;
+}
+
+article:hover .stakeholder-card-cover__img {
+  transform: scale(1.05);
+}
+
+.stakeholder-card-cover__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(11, 31, 46, 0.85) 100%);
+  pointer-events: none;
 }

@@ -30,34 +30,84 @@ export default function LeaderboardPage() {
 
         {/* Podium — top 3 */}
         {sorted.length >= 3 && (
-          <div className="grid grid-cols-3 gap-3 mb-10">
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'flex-end',
+              gap: 12,
+              maxWidth: 420,
+              margin: '0 auto 40px',
+              width: '100%',
+            }}
+          >
             {[sorted[1], sorted[0], sorted[2]].map((c, pos) => {
               const actualRank = pos === 0 ? 2 : pos === 1 ? 1 : 3
-              const heights = ['h-24', 'h-32', 'h-20']
+              const podiumHeights = [96, 128, 80]
               const podiumColors = ['#9CA3AF', '#F5E6C8', '#CD7F32']
               const color = podiumColors[pos]
+              const initials = c?.name?.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) || '??'
               return (
-                <div key={c?.id} className="flex flex-col items-center gap-2">
+                <div
+                  key={c?.id}
+                  style={{
+                    flex: '0 0 120px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 8,
+                  }}
+                >
+                  {/* Initials avatar — no broken img tags */}
                   <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center font-black text-white text-sm"
                     style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 900,
+                      fontSize: 14,
+                      color: '#fff',
                       background: `linear-gradient(135deg, ${color}60, ${color}20)`,
                       border: `2px solid ${color}50`,
+                      flexShrink: 0,
                     }}
                   >
-                    {c?.name?.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)}
-                  </div>
-                  <div className="text-xs font-semibold text-white text-center truncate max-w-[90px]">
-                    {c?.name?.split(' ')[0]}
+                    {initials}
                   </div>
                   <div
-                    className={`w-full rounded-t-xl flex flex-col items-center justify-end pb-3 ${heights[pos]}`}
-                    style={{ background: `${color}15`, border: `1px solid ${color}30` }}
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: '#fff',
+                      textAlign: 'center',
+                      maxWidth: 90,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
                   >
-                    <div className="text-xl">{['🥈', '🥇', '🥉'][pos]}</div>
-                    <div className="text-xs font-black" style={{ color }}>
-                      #{actualRank}
-                    </div>
+                    {c?.name?.split(' ')[0]}
+                  </div>
+                  {/* Podium block */}
+                  <div
+                    style={{
+                      width: '100%',
+                      height: podiumHeights[pos],
+                      borderRadius: '10px 10px 0 0',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'flex-end',
+                      paddingBottom: 10,
+                      background: `${color}15`,
+                      border: `1px solid ${color}30`,
+                    }}
+                  >
+                    <div style={{ fontSize: 22 }}>{['🥈', '🥇', '🥉'][pos]}</div>
+                    <div style={{ fontSize: 12, fontWeight: 900, color }}>#{actualRank}</div>
                   </div>
                 </div>
               )
