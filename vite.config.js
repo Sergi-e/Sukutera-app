@@ -11,6 +11,17 @@ export default defineConfig({
     outDir: 'dist',
   },
   server: {
-    open: true,
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: true,
+    open: false,
+    // Allow Cursor previews / reverse tunnels (localtunnel, cloudflared, etc.)
+    allowedHosts: true,
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: 4173,
+    strictPort: true,
+    allowedHosts: true,
   },
 })
