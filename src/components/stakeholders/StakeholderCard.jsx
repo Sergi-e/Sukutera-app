@@ -7,9 +7,6 @@ export default function StakeholderCard({ stakeholder, categoryColor, coverImage
   const [coverUrl, setCoverUrl] = useState(coverImage)
   const [coverLoaded, setCoverLoaded] = useState(false)
 
-  const showDistrictBadge =
-    district && !location?.toLowerCase().includes(district.toLowerCase())
-
   function handleContact() {
     setContactNote(true)
     setTimeout(() => setContactNote(false), 2800)
@@ -42,6 +39,7 @@ export default function StakeholderCard({ stakeholder, categoryColor, coverImage
     >
       {coverImage && (
         <div className="stakeholder-card-cover">
+          {/* TODO: Replace with actual field photo from /public/images/waste-house.jpg */}
           <img
             src={coverUrl}
             alt={`${name} field site`}
@@ -103,23 +101,21 @@ export default function StakeholderCard({ stakeholder, categoryColor, coverImage
           <h3 style={{ fontSize: 16, fontWeight: 800, color: '#fff', marginBottom: 4, lineHeight: 1.2 }}>
             {name}
           </h3>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>📍 {location}</span>
-            {showDistrictBadge && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)' }}>📍 {location}</span>
             <span
               style={{
                 fontSize: 10,
                 fontWeight: 600,
-                padding: '3px 10px',
+                padding: '2px 8px',
                 borderRadius: 999,
-                background: `${categoryColor}22`,
+                background: `${categoryColor}18`,
                 color: categoryColor,
-                border: `1px solid ${categoryColor}44`,
+                border: `1px solid ${categoryColor}30`,
               }}
             >
               {district}
             </span>
-            )}
           </div>
         </div>
       </div>
@@ -168,16 +164,16 @@ export default function StakeholderCard({ stakeholder, categoryColor, coverImage
 
       <div
         style={{
-          padding: '12px 14px',
+          padding: '10px 12px',
           borderRadius: 10,
           background: 'rgba(255,255,255,0.03)',
           border: '1px solid rgba(255,255,255,0.06)',
         }}
       >
-        <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.4)', marginBottom: 6 }}>
+        <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.35)', marginBottom: 4 }}>
           Role in value chain
         </div>
-        <div style={{ fontSize: 13, fontWeight: 600, color: categoryColor, lineHeight: 1.4 }}>{role}</div>
+        <div style={{ fontSize: 13, fontWeight: 600, color: categoryColor }}>{role}</div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>

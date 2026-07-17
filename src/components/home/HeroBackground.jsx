@@ -32,6 +32,7 @@ export default function HeroBackground() {
 
   return (
     <>
+      {/* TODO: Replace with actual field photo from /public/images/hero-lake.jpg */}
       <div
         ref={heroRef}
         className={`hero-bg-photo ${loaded ? 'field-photo--loaded' : ''}`}

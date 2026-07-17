@@ -32,6 +32,8 @@ export default function WhyItMatters() {
 
   return (
     <section className="why-it-matters">
+      {/* TODO: Replace with actual field photo from /public/images/collector.jpg */}
+      {/* Using <img> (not background-image) so the browser respects EXIF orientation */}
       <img
         src={imgSrc}
         alt=""
@@ -44,10 +46,11 @@ export default function WhyItMatters() {
       <div className="why-it-matters__content">
         <AnimateInView variant="fade-left">
           <div style={{ textAlign: 'center', marginBottom: 40 }}>
-            <h2 style={{ fontSize: 30, fontWeight: 900, color: '#FFFFFF', marginBottom: 10 }}>
+            <div className="eyebrow-label" style={{ justifyContent: 'center', borderLeft: 'none', borderBottom: '1px solid var(--color-kivu)', paddingLeft: 0, paddingBottom: 8, marginBottom: 16, display: 'inline-flex' }}>The Challenge</div>
+            <h2 className="heading-section" style={{ fontSize: 'clamp(26px, 4vw, 38px)', marginBottom: 12 }}>
               Why It Matters
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 15 }}>
+            <p style={{ color: 'var(--color-stone)', fontSize: 15, fontFamily: 'var(--font-sans)' }}>
               The scale of the challenge — and the opportunity at Lake Kivu
             </p>
           </div>

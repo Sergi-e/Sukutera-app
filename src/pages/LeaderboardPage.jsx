@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useCollectors } from '../hooks/useCollectors'
 import AnimateInView from '../components/ui/AnimateInView'
-import PageContextPhoto from '../components/ui/PageContextPhoto'
 import Leaderboard from '../components/collectors/Leaderboard'
-import { FIELD_IMAGES } from '../lib/images'
 import { formatKg } from '../utils/formatters'
 
 export default function LeaderboardPage() {
@@ -30,24 +28,37 @@ export default function LeaderboardPage() {
           </div>
         </AnimateInView>
 
-        <div style={{ marginBottom: 32 }}>
-          <PageContextPhoto
-            src={FIELD_IMAGES.collector}
-            fallbackKey="collector"
-            alt="Waste collector working at the Lake Kivu shoreline"
-          />
-        </div>
-
         {/* Podium — top 3 */}
         {sorted.length >= 3 && (
-          <div className="podium-grid">
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'flex-end',
+              gap: 12,
+              maxWidth: 420,
+              margin: '0 auto 40px',
+              width: '100%',
+            }}
+          >
             {[sorted[1], sorted[0], sorted[2]].map((c, pos) => {
               const actualRank = pos === 0 ? 2 : pos === 1 ? 1 : 3
-              const barHeights = [96, 128, 80]
+              const podiumHeights = [96, 128, 80]
               const podiumColors = ['#9CA3AF', '#F5E6C8', '#CD7F32']
               const color = podiumColors[pos]
+              const initials = c?.name?.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) || '??'
               return (
-                <div key={c?.id} className="podium-col">
+                <div
+                  key={c?.id}
+                  style={{
+                    flex: '0 0 120px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 8,
+                  }}
+                >
+                  {/* Initials avatar — no broken img tags */}
                   <div
                     style={{
                       width: 48,
@@ -57,21 +68,22 @@ export default function LeaderboardPage() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontWeight: 900,
-                      color: '#fff',
                       fontSize: 14,
+                      color: '#fff',
                       background: `linear-gradient(135deg, ${color}60, ${color}20)`,
                       border: `2px solid ${color}50`,
+                      flexShrink: 0,
                     }}
                   >
-                    {c?.name?.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)}
+                    {initials}
                   </div>
                   <div
                     style={{
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: 600,
                       color: '#fff',
                       textAlign: 'center',
-                      maxWidth: 100,
+                      maxWidth: 90,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
@@ -79,16 +91,23 @@ export default function LeaderboardPage() {
                   >
                     {c?.name?.split(' ')[0]}
                   </div>
+                  {/* Podium block */}
                   <div
-                    className="podium-bar"
                     style={{
-                      height: barHeights[pos],
+                      width: '100%',
+                      height: podiumHeights[pos],
+                      borderRadius: '10px 10px 0 0',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'flex-end',
+                      paddingBottom: 10,
                       background: `${color}15`,
                       border: `1px solid ${color}30`,
                     }}
                   >
-                    <div style={{ fontSize: 22, lineHeight: 1 }}>{['🥈', '🥇', '🥉'][pos]}</div>
-                    <div style={{ fontSize: 12, fontWeight: 900, color, marginTop: 4 }}>#{actualRank}</div>
+                    <div style={{ fontSize: 22 }}>{['🥈', '🥇', '🥉'][pos]}</div>
+                    <div style={{ fontSize: 12, fontWeight: 900, color }}>#{actualRank}</div>
                   </div>
                 </div>
               )

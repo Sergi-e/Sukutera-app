@@ -14,8 +14,8 @@ export default function FieldResearchGallery() {
       <div className="field-research-section__inner">
         <AnimateInView variant="fade-left">
           <div className="field-research-section__header">
-            <p className="field-research-section__eyebrow">Field Research</p>
-            <h2 className="field-research-section__title">On the Ground at Lake Kivu</h2>
+            <div className="eyebrow-label field-research-section__eyebrow" style={{ justifyContent: 'center', borderLeft: 'none', borderBottom: '1px solid var(--color-kivu)', paddingLeft: 0, paddingBottom: 8, marginBottom: 16, display: 'inline-flex' }}>Field Research</div>
+            <h2 className="heading-section field-research-section__title">On the Ground at Lake Kivu</h2>
             <p className="field-research-section__sub">
               Real documentation from Rubavu — where community collectors, researchers, and conservation partners meet the shoreline every day.
             </p>
